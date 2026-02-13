@@ -51,25 +51,51 @@
           Retaining your visual format for AI to understand.
         </p>
       </div>
-      <div class="theme-toggle" aria-label="Background theme" role="radiogroup">
+      <div class="header-right">
         <button
-          id="lightThemeBtn"
-          class="theme-toggle-btn is-active"
+          id="helpTooltipBtn"
+          class="help-tooltip-btn"
           type="button"
-          aria-pressed="true"
-          role="radio"
+          aria-label="How to use RetainFormat"
+          aria-expanded="false"
+          aria-controls="helpTooltipPopover"
         >
-          Light
+          ?
         </button>
-        <button
-          id="darkThemeBtn"
-          class="theme-toggle-btn"
-          type="button"
-          aria-pressed="false"
-          role="radio"
+        <div
+          id="helpTooltipPopover"
+          class="help-tooltip-popover"
+          role="tooltip"
+          aria-hidden="true"
+          hidden
         >
-          Dark
-        </button>
+          <p class="help-tooltip-title">How to use RetainFormat</p>
+          <ol class="help-tooltip-steps">
+            <li>Paste your formatted text (from Word, email, etc.) into the <strong>Input</strong> box.</li>
+            <li>Assign a meaning to each format shown (e.g. red text = Answer, bold = Question).</li>
+            <li>Click <strong>Generate text</strong>, then <strong>Copy output</strong> to paste into your AI tool.</li>
+          </ol>
+        </div>
+        <div class="theme-toggle" aria-label="Background theme" role="radiogroup">
+          <button
+            id="lightThemeBtn"
+            class="theme-toggle-btn is-active"
+            type="button"
+            aria-pressed="true"
+            role="radio"
+          >
+            Light
+          </button>
+          <button
+            id="darkThemeBtn"
+            class="theme-toggle-btn"
+            type="button"
+            aria-pressed="false"
+            role="radio"
+          >
+            Dark
+          </button>
+        </div>
       </div>
     </header>
 
@@ -78,7 +104,7 @@
         <div class="panel-header">
           <h2 id="input-section-title">Input</h2>
           <p class="panel-description">
-            Paste rich text here. Formatting such as <strong>bold</strong>, color, headings, and emphasis will be preserved.
+            Paste your text here. Keep any formatting you use (bold, colors, headings) — we’ll use it in the next step.
           </p>
         </div>
         <div
@@ -98,7 +124,7 @@
             Parse formatting
           </button>
           <p class="hint">
-            Order will never change. You decide which formats have meaning; everything else is left untouched.
+          <!-- Order will never change. You decide which formats have meaning; everything else is left untouched. -->
           </p>
         </div>
       </section>
@@ -107,7 +133,7 @@
         <div class="panel-header">
           <h2 id="detected-section-title">Detected formatting</h2>
           <p class="panel-description">
-            Only formats that actually appear in your text are listed. Optionally assign semantic meanings.
+            Tell us what each format means (e.g. red = Answer, bold = Question). Only formats found in your text are listed.
           </p>
         </div>
         <div id="detectedFormattingContainer" class="detected-list empty-state">
@@ -131,7 +157,7 @@
         <div class="panel-header">
           <h2 id="output-section-title">Output</h2>
           <p class="panel-description">
-            AI‑ready text with explicit semantic tags. Copy directly into ChatGPT, Claude, Gemini, or other tools.
+            Your text with clear tags for each meaning. Copy and paste this into ChatGPT, Claude, Gemini, or any AI tool.
           </p>
         </div>
         <div class="output-controls">
@@ -184,7 +210,7 @@
           ></div>
         </div>
         <div class="output-block">
-          <div class="output-label">Visual preview (tags highlighted)</div>
+          <div class="output-label"> Preview to check the tags inserted</div>
           <div
             id="outputPreview"
             class="editorOutput output-preview"
@@ -193,10 +219,23 @@
           ></div>
         </div>
         <p class="hint">
-          Each line keeps its original order. Tags are applied only when matching user‑defined meanings.
+          Order is preserved. Tags appear only where you assigned a meaning.
         </p>
       </section>
     </main>
+
+    <footer class="app-footer">
+      <div class="legal-notice">
+        <p><strong>Disclaimer</strong></p>
+        <ul>
+          <li>You are responsible for the content you paste and how you use it in any AI model. RetainFormat does not take responsibility for that content or its use.</li>
+          <li>Please review the generated text before pasting it into an AI tool. We do not guarantee accuracy. If you find a bug, please report it (e.g. via  <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">GitHub issues</a>).</li>
+        </ul>
+      </div>
+      <p class="app-credits">
+        © 2026 RetainFormat. All rights reserved. Created by <a href="https://www.linkedin.com/in/meghana-shettigar-a53296134/" target="_blank" rel="noopener noreferrer">Meghana Shettigar</a>.
+      </p>
+    </footer>
 
     <div id="feedbackModal" class="feedback-modal" aria-hidden="true">
       <div class="feedback-modal-backdrop"></div>

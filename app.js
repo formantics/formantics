@@ -805,6 +805,38 @@ if (darkThemeBtn) {
 // Initial button state
 updateButtonsEnabledState();
 
+// Help tooltip
+var helpTooltipBtn = document.getElementById("helpTooltipBtn");
+var helpTooltipPopover = document.getElementById("helpTooltipPopover");
+
+if (helpTooltipBtn && helpTooltipPopover) {
+  helpTooltipBtn.addEventListener("click", function () {
+    var isOpen = helpTooltipPopover.getAttribute("aria-hidden") !== "true";
+    if (isOpen) {
+      helpTooltipPopover.setAttribute("aria-hidden", "true");
+      helpTooltipPopover.hidden = true;
+      helpTooltipBtn.setAttribute("aria-expanded", "false");
+    } else {
+      helpTooltipPopover.setAttribute("aria-hidden", "false");
+      helpTooltipPopover.hidden = false;
+      helpTooltipBtn.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (
+      helpTooltipPopover.getAttribute("aria-hidden") === "true"
+    ) return;
+    if (
+      helpTooltipBtn.contains(e.target) ||
+      helpTooltipPopover.contains(e.target)
+    ) return;
+    helpTooltipPopover.setAttribute("aria-hidden", "true");
+    helpTooltipPopover.hidden = true;
+    helpTooltipBtn.setAttribute("aria-expanded", "false");
+  });
+}
+
 // Feedback logic
 function openFeedbackModal(kind) {
   if (!feedbackModal) return;
