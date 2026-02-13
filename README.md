@@ -1,4 +1,4 @@
-# Formantics – Formatting to Semantics for AI
+# RetainFormat – Formatting to Semantics for AI
 
 Formantics is a small, focused web app that **converts visual formatting into explicit semantic tags that AI models can reliably understand**.  
 Paste rich text from Word, Google Docs, PDFs, email, or the web and Formantics will preserve your formatting, let you assign meanings (like `Question`, `Answer`, `Time`, `Instruction`), and generate **AI‑ready tagged text** without changing the original order.
