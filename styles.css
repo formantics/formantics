@@ -84,6 +84,13 @@ body.theme-dark .app-subtitle {
   color: var(--color-text-muted-dark);
 }
 
+.help-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .theme-toggle {
   display: inline-flex;
   align-items: center;

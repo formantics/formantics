@@ -50,32 +50,34 @@
         <p class="app-subtitle">
           Retaining your visual format for AI to understand.
         </p>
+        <div class="help-tooltip-wrap">
+          <button
+            id="helpTooltipBtn"
+            class="help-tooltip-btn"
+            type="button"
+            aria-label="How to use RetainFormat"
+            aria-expanded="false"
+            aria-controls="helpTooltipPopover"
+          >
+            ?
+          </button>
+          <div
+            id="helpTooltipPopover"
+            class="help-tooltip-popover"
+            role="tooltip"
+            aria-hidden="true"
+            hidden
+          >
+            <p class="help-tooltip-title">How to use RetainFormat</p>
+            <ol class="help-tooltip-steps">
+              <li>Paste your formatted text (from Word, email, etc.) into the <strong>Input</strong> box.</li>
+              <li>Assign a meaning to each format shown (e.g. red text = Answer, bold = Question).</li>
+              <li>Click <strong>Generate text</strong>, then <strong>Copy output</strong> to paste into your AI tool.</li>
+            </ol>
+          </div>
+        </div>
       </div>
       <div class="header-right">
-        <button
-          id="helpTooltipBtn"
-          class="help-tooltip-btn"
-          type="button"
-          aria-label="How to use RetainFormat"
-          aria-expanded="false"
-          aria-controls="helpTooltipPopover"
-        >
-          ?
-        </button>
-        <div
-          id="helpTooltipPopover"
-          class="help-tooltip-popover"
-          role="tooltip"
-          aria-hidden="true"
-          hidden
-        >
-          <p class="help-tooltip-title">How to use RetainFormat</p>
-          <ol class="help-tooltip-steps">
-            <li>Paste your formatted text (from Word, email, etc.) into the <strong>Input</strong> box.</li>
-            <li>Assign a meaning to each format shown (e.g. red text = Answer, bold = Question).</li>
-            <li>Click <strong>Generate text</strong>, then <strong>Copy output</strong> to paste into your AI tool.</li>
-          </ol>
-        </div>
         <div class="theme-toggle" aria-label="Background theme" role="radiogroup">
           <button
             id="lightThemeBtn"
@@ -228,8 +230,8 @@
       <div class="legal-notice">
         <p><strong>Disclaimer</strong></p>
         <ul>
-          <li>You are responsible for the content you paste and how you use it in any AI model. RetainFormat does not take responsibility for that content or its use.</li>
-          <li>Please review the generated text before pasting it into an AI tool. We do not guarantee accuracy. If you find a bug, please report it (e.g. via  <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">GitHub issues</a>).</li>
+          <li>You are responsible for the content you paste and how you use it in any AI model or any other tool. RetainFormat does not take responsibility for that content or its use.</li>
+          <li>Please review the generated text before pasting it into an AI tool or any other tool. We do not guarantee accuracy. If you find a bug, please report it (e.g. via  <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">GitHub issues</a>).</li>
         </ul>
       </div>
       <p class="app-credits">
