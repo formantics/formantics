@@ -466,15 +466,119 @@ function buildSegmentedText(activeFormats) {
     }
   }
 
-  // Determine opening priority: tags that span more of the document open first (become outer tags)
-  var openingOrder = activeFormats
-    .map(function (f) {
-      return f.userLabel;
-    })
-    .filter(function (lbl) {
-      return lbl;
-    })
-    .sort(function (a, b) {
+  // Helper: Get the DOM element that has a specific format for a text node
+  function getFormatElement(textNode, formatLabel) {
+    if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return null;
+    var fmt = activeFormats.find(function (f) {
+      return f.userLabel === formatLabel;
+    });
+    if (!fmt) return null;
+
+    var el = textNode.parentElement;
+    if (!el) return null;
+
+    // Check if this element or an ancestor has the format
+    var checkEl = el;
+    while (checkEl && checkEl !== editor.parentNode) {
+      var style = window.getComputedStyle(checkEl);
+      var defaultColor = editorDefaultColor;
+      var defaultAlign = editorDefaultTextAlign;
+      var defaultWeight = editorDefaultWeight;
+
+      var matches = false;
+      if (fmt.kind === "bold") {
+        var weightStr = style.fontWeight;
+        var weightNum = parseInt(weightStr, 10);
+        var defaultNum =
+          typeof editorDefaultWeight === "number"
+            ? editorDefaultWeight
+            : parseInt(editorDefaultWeight, 10);
+        if (!isNaN(weightNum) && weightNum >= 600 && (!defaultNum || weightNum > defaultNum)) {
+          matches = true;
+        } else {
+          var tag = checkEl.tagName;
+          if (tag === "B" || tag === "STRONG") {
+            matches = true;
+          }
+        }
+      } else if (fmt.kind === "italic") {
+        if (style.fontStyle === "italic" || style.fontStyle === "oblique") {
+          matches = true;
+        } else {
+          var tagIt = checkEl.tagName;
+          if (tagIt === "I" || tagIt === "EM") {
+            matches = true;
+          }
+        }
+      } else if (fmt.kind === "underline") {
+        var textDecoration = style.textDecorationLine || style.textDecoration;
+        if (textDecoration && textDecoration.indexOf("underline") !== -1) {
+          matches = true;
+        }
+      } else if (fmt.kind === "heading") {
+        if (checkEl.tagName === fmt.key) {
+          matches = true;
+        }
+      } else if (fmt.kind === "color") {
+        var color = style.color;
+        if (
+          color &&
+          color !== defaultColor &&
+          color !== "rgb(0, 0, 0)" &&
+          color === fmt.key
+        ) {
+          matches = true;
+        }
+      } else if (fmt.kind === "alignment") {
+        var align = style.textAlign;
+        if (align && align !== defaultAlign && align === fmt.key) {
+          matches = true;
+        }
+      }
+
+      if (matches) {
+        return checkEl;
+      }
+      checkEl = checkEl.parentElement;
+    }
+    return null;
+  }
+
+  // Helper: Determine nesting order for labels at a specific text node
+  // Returns labels sorted outer-to-inner based on DOM nesting
+  function getNestedOrder(textNode, labels) {
+    if (labels.length <= 1) return labels;
+
+    // Get the element for each label
+    var labelElements = {};
+    for (var li = 0; li < labels.length; li++) {
+      var lbl = labels[li];
+      labelElements[lbl] = getFormatElement(textNode, lbl);
+    }
+
+    // Sort by DOM nesting: outer elements first
+    return labels.slice().sort(function (a, b) {
+      var elA = labelElements[a];
+      var elB = labelElements[b];
+      if (!elA && !elB) return 0;
+      if (!elA) return 1;
+      if (!elB) return -1;
+
+      // Check if A contains B (A is outer)
+      var check = elB;
+      while (check && check !== editor.parentNode) {
+        if (check === elA) return -1; // A contains B, so A is outer
+        check = check.parentElement;
+      }
+
+      // Check if B contains A (B is outer)
+      check = elA;
+      while (check && check !== editor.parentNode) {
+        if (check === elB) return 1; // B contains A, so B is outer
+        check = check.parentElement;
+      }
+
+      // If neither contains the other, use span length as fallback
       var lenA =
         spanStart[a] === undefined || spanEnd[a] === undefined
           ? -1
@@ -485,6 +589,7 @@ function buildSegmentedText(activeFormats) {
           : spanEnd[b] - spanStart[b];
       return lenB - lenA;
     });
+  }
 
   var result = "";
   var openTags = [];
@@ -506,16 +611,23 @@ function buildSegmentedText(activeFormats) {
       }
     }
 
-    // Open new tags in openingOrder (outer to inner)
-    for (var oi = 0; oi < openingOrder.length; oi++) {
-      var tag = openingOrder[oi];
-      if (
-        textNodeLabels.indexOf(tag) !== -1 &&
-        openTags.indexOf(tag) === -1
-      ) {
-        result += "<" + tag + ">";
-        openTags.push(tag);
+    // Determine which tags need to be opened (not already open)
+    var tagsToOpen = [];
+    for (var ti = 0; ti < textNodeLabels.length; ti++) {
+      var tag = textNodeLabels[ti];
+      if (openTags.indexOf(tag) === -1) {
+        tagsToOpen.push(tag);
       }
+    }
+
+    // Sort tags to open by DOM nesting order (outer to inner)
+    var nestedOrder = getNestedOrder(item.node, tagsToOpen);
+
+    // Open new tags in nesting order (outer to inner)
+    for (var oi = 0; oi < nestedOrder.length; oi++) {
+      var tag = nestedOrder[oi];
+      result += "<" + tag + ">";
+      openTags.push(tag);
     }
 
     // Append the actual text exactly as in input
