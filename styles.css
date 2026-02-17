@@ -392,6 +392,160 @@ body.theme-dark .editorOutput:empty::before {
   }
 }
 
+/* Mobile-specific styles for better readability */
+@media (max-width: 480px) {
+  /* Increase base font size for mobile */
+  body {
+    font-size: 16px;
+  }
+
+  /* Header adjustments */
+  .app-header {
+    margin: 20px auto 16px auto;
+    padding: 0 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .app-header-main {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .app-logo {
+    max-width: 80px;
+    flex-shrink: 0;
+  }
+
+  /* Allow title to wrap on mobile */
+  .app-title {
+    font-size: 16px;
+    white-space: normal;
+    line-height: 1.4;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .help-tooltip-wrap {
+    flex-shrink: 0;
+  }
+
+  .header-right {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* Increase panel text sizes */
+  .panel {
+    padding: 16px;
+  }
+
+  .panel-header h2 {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .panel-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .seo-intro {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Editor text sizes */
+  .editor,
+  .editorOutput {
+    font-size: 16px;
+    padding: 12px;
+    min-height: 160px;
+  }
+
+  /* Button sizes */
+  .primary-btn,
+  .secondary-btn {
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+
+  /* Main content spacing */
+  .app-main {
+    padding: 0 16px 20px 16px;
+    margin: 0 auto 24px auto;
+    gap: 12px;
+  }
+
+  /* Footer text */
+  .app-footer {
+    padding: 0 16px;
+    font-size: 13px;
+  }
+
+  .legal-notice {
+    font-size: 13px;
+    padding: 12px;
+  }
+
+  .faq-section {
+    font-size: 13px;
+  }
+
+  .faq-summary {
+    font-size: 15px;
+    padding: 14px;
+  }
+
+  .faq-list {
+    font-size: 13px;
+    padding: 0 14px 14px 14px;
+  }
+
+  .faq-list dt {
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  .faq-list dd {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .app-credits {
+    font-size: 13px;
+  }
+
+  .app-credits .credits-links {
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  /* Hint text */
+  .hint {
+    font-size: 13px;
+  }
+
+  /* Output labels */
+  .output-label {
+    font-size: 13px;
+  }
+
+  /* Feedback bar */
+  .feedback-label-inline {
+    font-size: 13px;
+  }
+
+  .feedback-btn {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
 .primary-btn,
 .secondary-btn {
   border-radius: 999px;
