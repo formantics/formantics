@@ -1,0 +1,21 @@
+# robots.txt for RetainFormat
+# https://www.retainformat.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin/dashboard pages (password-protected analytics)
+Disallow: /dashboard.html
+
+# Allow important resources
+Allow: /assets/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.svg
+Allow: /*.ico
+
+# Sitemap location
+Sitemap: https://www.retainformat.com/sitemap.xml

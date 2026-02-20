@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RetainFormat – Analytics Dashboard</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 24px;
+        background: #0f111a;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+      .container { max-width: 900px; margin: 0 auto; }
+      h1 { font-size: 1.5rem; margin: 0 0 24px 0; color: #f5f5ff; }
+      .login-box {
+        background: #1a1f2e;
+        padding: 32px;
+        border-radius: 12px;
+        max-width: 360px;
+        margin: 80px auto 0;
+      }
+      .login-box h2 { margin: 0 0 16px 0; font-size: 1.25rem; }
+      .login-box input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #0f111a;
+        color: #e2e8f0;
+        font-size: 1rem;
+        margin-bottom: 16px;
+      }
+      .login-box button {
+        width: 100%;
+        padding: 12px;
+        background: #4f46e5;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      .login-box button:hover { background: #4338ca; }
+      .login-error { color: #f87171; font-size: 14px; margin-top: 8px; }
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .dashboard-header a {
+        color: #94a3b8;
+        text-decoration: none;
+        font-size: 14px;
+      }
+      .dashboard-header a:hover { color: #cbd5e1; }
+      .card {
+        background: #1a1f2e;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+      }
+      .card h3 {
+        margin: 0 0 16px 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+      }
+      .stat {
+        background: #0f111a;
+        padding: 16px;
+        border-radius: 8px;
+      }
+      .stat-value { font-size: 1.75rem; font-weight: 700; color: #f5f5ff; }
+      .stat-label { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+      .hidden { display: none !important; }
+      .loading { color: #94a3b8; }
+      .owner-toggle { margin-bottom: 16px; }
+      .owner-toggle button { padding: 8px 14px; border-radius: 8px; border: 1px solid #334155; background: #1a1f2e; color: #e2e8f0; cursor: pointer; font-size: 13px; }
+      .owner-toggle button:hover { background: #262d3d; }
+      .owner-toggle button.is-owner { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+      .filter-owner { margin-bottom: 12px; font-size: 13px; color: #94a3b8; }
+      .filter-owner label { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+      .sessions-card { overflow-x: auto; }
+      .sessions-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+      .sessions-table th, .sessions-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #334155; }
+      .sessions-table th { color: #94a3b8; font-weight: 600; }
+      .sessions-table .owner-yes { color: #fbbf24; }
+      .sessions-table .excluded { opacity: 0.6; }
+      .sessions-table input.note { width: 100%; max-width: 120px; padding: 4px 8px; background: #0f111a; border: 1px solid #334155; border-radius: 4px; color: #e2e8f0; font-size: 12px; }
+      .sessions-table .btn-small { padding: 4px 10px; font-size: 11px; border-radius: 6px; border: none; cursor: pointer; margin-right: 4px; }
+      .sessions-table .btn-exclude { background: #475569; color: #fff; }
+      .sessions-table .btn-delete { background: #dc2626; color: #fff; }
+      .sessions-table .btn-include { background: #059669; color: #fff; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="loginScreen" class="login-box">
+        <h2>Dashboard login</h2>
+        <input type="password" id="dashboardPassword" placeholder="Password" autocomplete="off" />
+        <button type="button" id="loginBtn">Enter</button>
+        <p id="loginError" class="login-error hidden"></p>
+      </div>
+
+      <div id="dashboardScreen" class="hidden">
+        <div class="dashboard-header">
+          <h1>RetainFormat analytics</h1>
+          <a href="index.html">← Back to app</a>
+        </div>
+
+        <div id="dashboardLoading" class="loading">Loading analytics…</div>
+        <div id="dashboardContent" class="hidden">
+          <div class="card owner-toggle">
+            <span style="margin-right:12px;">Mark this browser as &quot;owner&quot; so future visits are tagged:</span>
+            <button type="button" id="ownerMarkBtn">Mark this browser as mine</button>
+          </div>
+          <div class="card filter-owner">
+            <label><input type="checkbox" id="excludeOwnerFromStats" /> Exclude owner sessions from stats above</label>
+          </div>
+          <div class="card">
+            <h3>Traffic</h3>
+            <div class="stat-grid">
+              <div class="stat">
+                <div class="stat-value" id="statLandings">0</div>
+                <div class="stat-label">Total landings (page views)</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" id="statUniqueVisitors">0</div>
+                <div class="stat-label">Unique visitors (browsers)</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" id="statSessions">0</div>
+                <div class="stat-label">Sessions (opens)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Button clicks</h3>
+            <div class="stat-grid">
+              <div class="stat">
+                <div class="stat-value" id="statParse">0</div>
+                <div class="stat-label">Parse formatting</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" id="statGenerate">0</div>
+                <div class="stat-label">Generate text</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" id="statCopy">0</div>
+                <div class="stat-label">Copy output</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Feedback</h3>
+            <div class="stat-grid">
+              <div class="stat">
+                <div class="stat-value" id="statLike">0</div>
+                <div class="stat-label">Like</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" id="statDislike">0</div>
+                <div class="stat-label">Dislike</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" id="statQuestion">0</div>
+                <div class="stat-label">Question</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value" id="statFeedbackWithEmail">0</div>
+                <div class="stat-label">Feedback with email</div>
+              </div>
+            </div>
+          </div>
+          <div class="card sessions-card">
+            <h3>Sessions (edit / exclude / delete)</h3>
+            <p style="font-size:12px;color:#94a3b8;margin:0 0 12px 0;">Each row is one session. Owner = sessions from a browser marked as yours. Exclude removes from stats; Delete removes events permanently.</p>
+            <div id="sessionsTableWrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script>
+      window.RETAINFORMAT_FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDmLz9MgPtzjg51nprVDmqJD0R9PadLWLo",
+        authDomain: "formantics-feedback.firebaseapp.com",
+        projectId: "formantics-feedback",
+        storageBucket: "formantics-feedback.firebasestorage.app",
+        messagingSenderId: "366267284351",
+        appId: "1:366267284351:web:d88c55c6a7e2b17456784a"
+      };
+      if (window.RETAINFORMAT_FIREBASE_CONFIG && window.RETAINFORMAT_FIREBASE_CONFIG.projectId) {
+        firebase.initializeApp(window.RETAINFORMAT_FIREBASE_CONFIG);
+        window._retainformatDb = firebase.firestore();
+      }
+
+      var DASHBOARD_AUTH_KEY = "retainformat_dashboard_auth";
+      var EXPECTED_PASSWORD = "chicken";
+      var STORAGE_OWNER_FLAG = "retainformat_owner_flag";
+
+      var loginScreen = document.getElementById("loginScreen");
+      var dashboardScreen = document.getElementById("dashboardScreen");
+      var dashboardPassword = document.getElementById("dashboardPassword");
+      var loginBtn = document.getElementById("loginBtn");
+      var loginError = document.getElementById("loginError");
+      var dashboardLoading = document.getElementById("dashboardLoading");
+      var dashboardContent = document.getElementById("dashboardContent");
+      var ownerMarkBtn = document.getElementById("ownerMarkBtn");
+      var excludeOwnerFromStats = document.getElementById("excludeOwnerFromStats");
+      var sessionsTableWrap = document.getElementById("sessionsTableWrap");
+
+      function updateOwnerButton() {
+        if (!ownerMarkBtn) return;
+        var isOwner = false;
+        try { isOwner = localStorage.getItem(STORAGE_OWNER_FLAG) === "1"; } catch (e) {}
+        ownerMarkBtn.textContent = isOwner ? "Unmark this browser (stop tagging as owner)" : "Mark this browser as mine";
+        ownerMarkBtn.classList.toggle("is-owner", isOwner);
+      }
+      if (ownerMarkBtn) {
+        ownerMarkBtn.addEventListener("click", function () {
+          try {
+            var isOwner = localStorage.getItem(STORAGE_OWNER_FLAG) === "1";
+            localStorage.setItem(STORAGE_OWNER_FLAG, isOwner ? "0" : "1");
+            updateOwnerButton();
+          } catch (e) {}
+        });
+      }
+
+      function showLogin() {
+        loginScreen.classList.remove("hidden");
+        dashboardScreen.classList.add("hidden");
+      }
+
+      function showDashboard() {
+        loginScreen.classList.add("hidden");
+        dashboardScreen.classList.remove("hidden");
+        updateOwnerButton();
+        loadAnalytics();
+      }
+
+      function checkAuth() {
+        try {
+          if (sessionStorage.getItem(DASHBOARD_AUTH_KEY) === "1") {
+            showDashboard();
+            return;
+          }
+        } catch (e) {}
+        showLogin();
+      }
+
+      loginBtn.addEventListener("click", function () {
+        var pwd = (dashboardPassword.value || "").trim();
+        loginError.classList.add("hidden");
+        if (pwd === EXPECTED_PASSWORD) {
+          try {
+            sessionStorage.setItem(DASHBOARD_AUTH_KEY, "1");
+          } catch (e) {}
+          showDashboard();
+        } else {
+          loginError.textContent = "Wrong password.";
+          loginError.classList.remove("hidden");
+        }
+      });
+
+      dashboardPassword.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") loginBtn.click();
+      });
+
+      function setEl(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function loadAnalytics() {
+        var db = window._retainformatDb;
+        if (!db) {
+          dashboardLoading.textContent = "Firebase not configured.";
+          return;
+        }
+
+        dashboardLoading.classList.remove("hidden");
+        dashboardContent.classList.add("hidden");
+
+        var excludeOwner = excludeOwnerFromStats && excludeOwnerFromStats.checked;
+
+        Promise.all([
+          db.collection("analytics_events").get(),
+          db.collection("session_overrides").get()
+        ]).then(function (results) {
+          var eventsSnap = results[0];
+          var overridesSnap = results[1];
+
+          var events = [];
+          eventsSnap.forEach(function (doc) {
+            var d = doc.data();
+            d.id = doc.id;
+            events.push(d);
+          });
+
+          var overrides = {};
+          overridesSnap.forEach(function (doc) {
+            overrides[doc.id] = doc.data();
+          });
+
+          function included(e) {
+            if (e.sessionId && overrides[e.sessionId] && overrides[e.sessionId].excluded) return false;
+            if (excludeOwner && e.isOwner) return false;
+            return true;
+          }
+
+          var pageViews = 0;
+          var visitorIds = {};
+          var sessionIds = {};
+          var parseClicks = 0, generateClicks = 0, copyClicks = 0;
+          var likeCount = 0, dislikeCount = 0, questionCount = 0;
+          var feedbackWithEmail = 0;
+
+          events.forEach(function (e) {
+            if (!included(e)) return;
+            var t = e.type || "";
+            if (t === "page_view") {
+              pageViews++;
+              if (e.visitorId) visitorIds[e.visitorId] = true;
+              if (e.sessionId) sessionIds[e.sessionId] = true;
+            }
+            if (t === "parse_formatting") parseClicks++;
+            if (t === "generate_text") generateClicks++;
+            if (t === "copy_output") copyClicks++;
+            if (t === "feedback_like") likeCount++;
+            if (t === "feedback_dislike") dislikeCount++;
+            if (t === "feedback_question") questionCount++;
+            if (t.indexOf("feedback_") === 0 && e.email && String(e.email).trim()) feedbackWithEmail++;
+          });
+
+          setEl("statLandings", pageViews);
+          setEl("statUniqueVisitors", Object.keys(visitorIds).length);
+          setEl("statSessions", Object.keys(sessionIds).length);
+          setEl("statParse", parseClicks);
+          setEl("statGenerate", generateClicks);
+          setEl("statCopy", copyClicks);
+          setEl("statLike", likeCount);
+          setEl("statDislike", dislikeCount);
+          setEl("statQuestion", questionCount);
+          setEl("statFeedbackWithEmail", feedbackWithEmail);
+
+          buildSessionsTable(events, overrides);
+          dashboardLoading.classList.add("hidden");
+          dashboardContent.classList.remove("hidden");
+        }).catch(function (err) {
+          dashboardLoading.textContent = "Could not load data: " + (err.message || "error");
+          console.error(err);
+        });
+      }
+
+      function buildSessionsTable(events, overrides) {
+        if (!sessionsTableWrap) return;
+        var bySession = {};
+        events.forEach(function (e) {
+          var sid = e.sessionId || "unknown";
+          if (!bySession[sid]) {
+            bySession[sid] = { sessionId: sid, visitorId: e.visitorId || "", isOwner: false, first: e.timestamp, last: e.timestamp, pageViews: 0, parse: 0, generate: 0, copy: 0, like: 0, dislike: 0, question: 0, docIds: [] };
+          }
+          var s = bySession[sid];
+          if (e.isOwner) s.isOwner = true;
+          if (e.timestamp < s.first) s.first = e.timestamp;
+          if (e.timestamp > s.last) s.last = e.timestamp;
+          s.docIds.push(e.id);
+          var t = e.type || "";
+          if (t === "page_view") s.pageViews++;
+          if (t === "parse_formatting") s.parse++;
+          if (t === "generate_text") s.generate++;
+          if (t === "copy_output") s.copy++;
+          if (t === "feedback_like") s.like++;
+          if (t === "feedback_dislike") s.dislike++;
+          if (t === "feedback_question") s.question++;
+        });
+        var sessions = Object.keys(bySession).map(function (k) { return bySession[k]; });
+        sessions.sort(function (a, b) { return (b.last || "").localeCompare(a.last || ""); });
+
+        var excludeOwner = excludeOwnerFromStats && excludeOwnerFromStats.checked;
+        var html = '<table class="sessions-table"><thead><tr><th>Session</th><th>Visitor</th><th>Owner?</th><th>First</th><th>Last</th><th>PV</th><th>Parse</th><th>Gen</th><th>Copy</th><th>Like</th><th>Dislike</th><th>Q</th><th>Note</th><th>Actions</th></tr></thead><tbody>';
+        sessions.forEach(function (s) {
+          var exc = overrides[s.sessionId] && overrides[s.sessionId].excluded;
+          var note = (overrides[s.sessionId] && overrides[s.sessionId].note) || "";
+          var firstStr = s.first ? new Date(s.first).toLocaleString() : "";
+          var lastStr = s.last ? new Date(s.last).toLocaleString() : "";
+          var rowClass = exc ? "excluded" : "";
+          html += '<tr class="' + rowClass + '"><td title="' + s.sessionId + '">' + (s.sessionId.length > 8 ? s.sessionId.slice(0, 8) + "…" : s.sessionId) + '</td><td title="' + s.visitorId + '">' + (s.visitorId.length > 8 ? s.visitorId.slice(0, 8) + "…" : s.visitorId) + '</td><td class="' + (s.isOwner ? "owner-yes" : "") + '">' + (s.isOwner ? "Yes" : "") + '</td><td>' + firstStr + '</td><td>' + lastStr + '</td><td>' + s.pageViews + '</td><td>' + s.parse + '</td><td>' + s.generate + '</td><td>' + s.copy + '</td><td>' + s.like + '</td><td>' + s.dislike + '</td><td>' + s.question + '</td><td><input class="note" type="text" value="' + (note.replace(/"/g, "&quot;")) + '" data-session="' + s.sessionId + '" placeholder="Note" /></td><td>';
+          if (exc) {
+            html += '<button class="btn-small btn-include" data-session="' + s.sessionId + '" data-action="include">Include</button>';
+          } else {
+            html += '<button class="btn-small btn-exclude" data-session="' + s.sessionId + '" data-action="exclude">Exclude</button>';
+          }
+          html += '<button class="btn-small btn-delete" data-session="' + s.sessionId + '" data-docids="' + s.docIds.join(",") + '" data-action="delete">Delete</button></td></tr>';
+        });
+        html += "</tbody></table>";
+        sessionsTableWrap.innerHTML = html;
+
+        sessionsTableWrap.querySelectorAll("input.note").forEach(function (input) {
+          var sessionId = input.getAttribute("data-session");
+          var saveNote = function () {
+            var val = (input.value || "").trim();
+            window._retainformatDb.collection("session_overrides").doc(sessionId).set({ excluded: !!(overrides[sessionId] && overrides[sessionId].excluded), note: val }, { merge: true }).then(function () { loadAnalytics(); });
+          };
+          input.addEventListener("blur", saveNote);
+          input.addEventListener("keydown", function (e) { if (e.key === "Enter") { input.blur(); } });
+        });
+        sessionsTableWrap.querySelectorAll("button[data-action=exclude], button[data-action=include]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var sessionId = btn.getAttribute("data-session");
+            var isExclude = btn.getAttribute("data-action") === "exclude";
+            var note = (overrides[sessionId] && overrides[sessionId].note) || "";
+            window._retainformatDb.collection("session_overrides").doc(sessionId).set({ excluded: isExclude, note: note }, { merge: true }).then(function () { loadAnalytics(); });
+          });
+        });
+        sessionsTableWrap.querySelectorAll("button[data-action=delete]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            if (!confirm("Delete all events for this session? This cannot be undone.")) return;
+            var docIds = (btn.getAttribute("data-docids") || "").split(",").filter(Boolean);
+            var sessionId = btn.getAttribute("data-session");
+            var db = window._retainformatDb;
+            var batch = db.batch();
+            docIds.forEach(function (id) {
+              batch.delete(db.collection("analytics_events").doc(id));
+            });
+            batch.delete(db.collection("session_overrides").doc(sessionId));
+            batch.commit().then(function () { loadAnalytics(); }).catch(function (err) { alert("Delete failed: " + (err.message || "error")); });
+          });
+        });
+      }
+
+      if (excludeOwnerFromStats) {
+        excludeOwnerFromStats.addEventListener("change", function () { loadAnalytics(); });
+      }
+
+      checkAuth();
+    </script>
+  </body>
+</html>
