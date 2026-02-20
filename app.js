@@ -117,6 +117,7 @@ function detectFormatting() {
     underline: false,
     headings: {}, // level -> true
     colors: {}, // colorString -> true
+    highlights: {}, // backgroundColor string -> true (text highlight)
     alignments: {} // alignString -> true
   };
 
@@ -186,6 +187,12 @@ function detectFormatting() {
     var color = style.color;
     if (color && color !== editorDefaultColor && color !== "rgb(0, 0, 0)") {
       found.colors[color] = true;
+    }
+
+    // Highlights (background color, e.g. from Word/Docs highlighter)
+    var bg = style.backgroundColor;
+    if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)") {
+      found.highlights[bg] = true;
     }
 
     // Alignment on block-level elements
@@ -328,6 +335,22 @@ function buildDetectedFormattingUI(found) {
           preview.appendChild(swatch);
         });
       })(color);
+    }
+  }
+
+  // Highlights (background color)
+  for (var bg in found.highlights) {
+    if (Object.prototype.hasOwnProperty.call(found.highlights, bg)) {
+      (function (b) {
+        addFormat("highlight", b, "Highlight", function (preview) {
+          var span = document.createElement("span");
+          span.className = "color-swatch";
+          span.style.backgroundColor = b;
+          span.style.padding = "2px 6px";
+          span.textContent = "";
+          preview.appendChild(span);
+        });
+      })(bg);
     }
   }
 
@@ -529,6 +552,11 @@ function buildSegmentedText(activeFormats) {
         ) {
           matches = true;
         }
+      } else if (fmt.kind === "highlight") {
+        var bg = style.backgroundColor;
+        if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)" && bg === fmt.key) {
+          matches = true;
+        }
       } else if (fmt.kind === "alignment") {
         var align = style.textAlign;
         if (align && align !== defaultAlign && align === fmt.key) {
@@ -723,6 +751,22 @@ function allFormatsForTextNode(textNode, activeFormats) {
       ) {
         labels.push(label);
       }
+    } else if (fmt.kind === "highlight") {
+      var bg = style.backgroundColor;
+      if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)" && bg === fmt.key) {
+        labels.push(label);
+      } else {
+        var nBg = el;
+        while (nBg && nBg !== editor.parentNode) {
+          var bgStyle = window.getComputedStyle(nBg);
+          var bgVal = bgStyle.backgroundColor;
+          if (bgVal && bgVal !== "transparent" && bgVal !== "rgba(0, 0, 0, 0)" && bgVal === fmt.key) {
+            labels.push(label);
+            break;
+          }
+          nBg = nBg.parentElement;
+        }
+      }
     } else if (fmt.kind === "alignment") {
       var align = style.textAlign;
       if (align && align !== defaultAlign && align === fmt.key) {
@@ -779,6 +823,11 @@ function lineHasFormat(lineNode, fmt) {
       } else if (fmt.kind === "color") {
         var color = style.color;
         if (color && color !== defaultColor && color !== "rgb(0, 0, 0)" && color === fmt.key) {
+          return true;
+        }
+      } else if (fmt.kind === "highlight") {
+        var bg = style.backgroundColor;
+        if (bg && bg !== "transparent" && bg !== "rgba(0, 0, 0, 0)" && bg === fmt.key) {
           return true;
         }
       } else if (fmt.kind === "alignment") {
