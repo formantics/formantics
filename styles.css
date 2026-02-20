@@ -329,9 +329,13 @@ body.theme-dark .panel-description {
 }
 
 .editor {
-  min-height: 180px;
-  max-height: 340px;
+  height: 200px;
+  min-height: 200px;
+  max-height: 200px;
   overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border-subtle-light);
   padding: 10px 12px;
@@ -344,9 +348,13 @@ body.theme-dark .panel-description {
 }
 
 .editorOutput {
-  min-height: 180px;
-  max-height: 340px;
+  height: 200px;
+  min-height: 200px;
+  max-height: 200px;
   overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border-subtle-light);
   padding: 10px 12px;
@@ -474,7 +482,9 @@ body.theme-dark .editorOutput:empty::before {
   .editorOutput {
     font-size: 16px;
     padding: 12px;
-    min-height: 160px;
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
   }
 
   /* Button sizes */
@@ -780,9 +790,13 @@ body.theme-dark .output-label {
 }
 
 .output-editor {
-  min-height: 110px;
-  max-height: 220px;
+  height: 180px;
+  min-height: 180px;
+  max-height: 180px;
   overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   cursor: text;
   white-space: pre-wrap;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
@@ -791,9 +805,13 @@ body.theme-dark .output-label {
 }
 
 .output-preview {
-  min-height: 110px;
-  max-height: 220px;
+  height: 180px;
+  min-height: 180px;
+  max-height: 180px;
   overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   cursor: default;
   white-space: pre-wrap;
 }
