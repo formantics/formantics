@@ -76,7 +76,7 @@
       "@type": "FAQPage",
       "mainEntity": [
         { "@type": "Question", "name": "Why does ChatGPT remove my formatting?", "acceptedAnswer": { "@type": "Answer", "text": "ChatGPT and most AI chat interfaces accept plain text only. Bold, colors, and headings are stripped. RetainFormat converts them into explicit tags (e.g. Answer, Question) so the AI keeps your structure." } },
-        { "@type": "Question", "name": "How do I keep bold and colors when pasting into AI?", "acceptedAnswer": { "@type": "Answer", "text": "Paste your text here, click Parse formatting, assign a meaning to each style (e.g. bold = Question), then Generate text and copy. Paste that tagged output into ChatGPT, Claude, or Gemini." } },
+        { "@type": "Question", "name": "How do I keep bold and colors when pasting into AI?", "acceptedAnswer": { "@type": "Answer", "text": "Paste your text in the Input box, click Parse formatting, assign a meaning to each style (e.g. bold = Question), then Generate text and copy. Paste that tagged output into ChatGPT, Claude, or Gemini." } },
         { "@type": "Question", "name": "Can I use this with text from Word or Google Docs?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Paste from Word, Docs, PDF, or email. RetainFormat detects bold, italic, colors, and alignment and turns them into semantic tags for AI." } },
         { "@type": "Question", "name": "Is RetainFormat free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Use it in your browser with no sign-up." } },
         { "@type": "Question", "name": "How do I report a bug?", "acceptedAnswer": { "@type": "Answer", "text": "Please report bugs via GitHub issues (see the FAQ on our website for the link). We'll look into it as soon as we can." } }
@@ -86,64 +86,75 @@
   </head>
   <body class="theme-light">
     <header class="app-header">
-      <div class="app-header-main">
-        <img src="assets/logo.png" alt="RetainFormat" class="app-logo" />
-        <h1 class="app-title">Preserve formatting when pasting into ChatGPT &amp; AI tools</h1>
-        <div class="help-tooltip-wrap">
-          <button
-            id="helpTooltipBtn"
-            class="help-tooltip-btn"
-            type="button"
-            aria-label="How to use RetainFormat"
-            aria-expanded="false"
-            aria-controls="helpTooltipPopover"
-          >
-            ?
-          </button>
-          <div
-            id="helpTooltipPopover"
-            class="help-tooltip-popover"
-            role="tooltip"
-            aria-hidden="true"
-            hidden
-          >
-            <p class="help-tooltip-title">How to use RetainFormat</p>
-            <ol class="help-tooltip-steps">
-              <li>Paste your formatted text (from Word, email, etc.) into the <strong>Input</strong> box.</li>
-              <li>Assign a meaning to each format shown (e.g. red text = Answer, bold = Question).</li>
-              <li>Click <strong>Generate text</strong>, then <strong>Copy output</strong> to paste into your AI tool.</li>
-            </ol>
+      <nav class="nav-inner" aria-label="Main">
+        <a href="/" class="nav-logo-link">
+          <img src="assets/logo.png" alt="RetainFormat" class="app-logo" />
+        </a>
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/" class="nav-link nav-link-active" aria-current="page">Text to Tags</a></li>
+          <!-- Future: add more tools here, e.g. Batch Convert, etc. -->
+        </ul>
+        <div class="nav-right">
+          <div class="help-tooltip-wrap">
+            <button
+              id="helpTooltipBtn"
+              class="help-tooltip-btn"
+              type="button"
+              aria-label="How to use RetainFormat"
+              aria-expanded="false"
+              aria-controls="helpTooltipPopover"
+            >
+              ?
+            </button>
+            <div
+              id="helpTooltipPopover"
+              class="help-tooltip-popover"
+              role="tooltip"
+              aria-hidden="true"
+              hidden
+            >
+              <p class="help-tooltip-title">How to use RetainFormat</p>
+              <ol class="help-tooltip-steps">
+                <li>Paste your formatted text (from Word, email, etc.) into the <strong>Input</strong> box.</li>
+                <li>Assign a meaning to each format shown (e.g. red text = Answer, bold = Question).</li>
+                <li>Click <strong>Generate text</strong>, then <strong>Copy output</strong> to paste into your AI tool.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="theme-toggle" aria-label="Background theme" role="radiogroup">
+            <button
+              id="lightThemeBtn"
+              class="theme-toggle-btn is-active"
+              type="button"
+              aria-pressed="true"
+              role="radio"
+            >
+              Light
+            </button>
+            <button
+              id="darkThemeBtn"
+              class="theme-toggle-btn"
+              type="button"
+              aria-pressed="false"
+              role="radio"
+            >
+              Dark
+            </button>
           </div>
         </div>
-      </div>
-      <div class="header-right">
-        <div class="theme-toggle" aria-label="Background theme" role="radiogroup">
-          <button
-            id="lightThemeBtn"
-            class="theme-toggle-btn is-active"
-            type="button"
-            aria-pressed="true"
-            role="radio"
-          >
-            Light
-          </button>
-          <button
-            id="darkThemeBtn"
-            class="theme-toggle-btn"
-            type="button"
-            aria-pressed="false"
-            role="radio"
-          >
-            Dark
-          </button>
-        </div>
-      </div>
+      </nav>
     </header>
 
     <main class="app-main" aria-label="RetainFormat tool">
-      <p class="seo-intro">
-        <strong>Don't want AI to lose your formatting?</strong> RetainFormat will help you keep your structure.
-      </p>
+      <section class="hero">
+        <h1 class="hero-title">Convert Formatting into AI-Ready Tags</h1>
+        <p class="hero-subtitle">
+          Paste from Word, Google Docs, or email. We turn bold, colors, and headings into semantic tags so ChatGPT, Claude, and Gemini keep your structure.
+        </p>
+      </section>
+      <section class="tool-section" aria-label="RetainFormat tool">
+        <h2 class="tool-section-title">Try it</h2>
       <section class="panel" aria-labelledby="input-section-title">
         <div class="panel-header">
           <h2 id="input-section-title">Paste your formatted text</h2>
@@ -266,26 +277,69 @@
           Order is preserved. Tags appear only where you assigned a meaning.
         </p>
       </section>
+      </section>
+
+      <section class="example-section" aria-labelledby="example-heading">
+        <h2 id="example-heading" class="section-heading">See how it works</h2>
+        <p class="example-intro">
+          RetainFormat turns your formatted text into plain text with semantic tags. AI tools keep the meaning of each style.
+        </p>
+        <div class="example-blocks">
+          <div class="example-block">
+            <h3 class="example-label">Formatted input (from Word, email, etc.)</h3>
+            <div class="example-box example-input">
+              <p class="example-line"><strong>What is the capital of France?</strong></p>
+              <p class="example-line" style="color: #b91c1c;">Paris is the capital.</p>
+              <p class="example-line"><em>Additional note:</em> It has been since the 10th century.</p>
+            </div>
+          </div>
+          <div class="example-arrow" aria-hidden="true">→</div>
+          <div class="example-block">
+            <h3 class="example-label">AI-ready tagged output</h3>
+            <div class="example-box example-output">
+              <p class="example-line">&lt;Question&gt; What is the capital of France? &lt;/Question&gt;</p>
+              <p class="example-line">&lt;Answer&gt; Paris is the capital. &lt;/Answer&gt;</p>
+              <p class="example-line">&lt;Note&gt; Additional note: It has been since the 10th century. &lt;/Note&gt;</p>
+            </div>
+          </div>
+        </div>
+          <!-- ----- <p class="example-cta">Paste your own text above, assign meanings to each format, then copy the tagged output into ChatGPT, Claude, or Gemini.</p> ----- -->
+      </section>
+
+      <section class="faq-section" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" class="section-heading">Frequently asked questions</h2>
+        <div class="faq-list-wrapper">
+          <dl class="faq-list">
+            <div class="faq-item">
+              <dt>Why does ChatGPT remove my formatting?</dt>
+              <dd>ChatGPT and most AI chat interfaces accept plain text only. Bold, colors, and headings are stripped. RetainFormat converts them into explicit tags (e.g. &lt;Answer&gt;, &lt;Question&gt;) so the AI keeps your structure.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>How do I keep bold and colors when pasting into AI?</dt>
+              <dd>Paste your text in the above Input box, click Parse formatting, assign a meaning to each style (e.g. bold = Question), then Generate text and copy. Paste that tagged output into ChatGPT, Claude, or Gemini.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Can I use this with text from Word or Google Docs?</dt>
+              <dd>Yes. Paste from Word, Docs, PDF, or email. RetainFormat detects bold, italic, colors, and alignment and turns them into semantic tags for AI.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Is RetainFormat free?</dt>
+              <dd>Yes. Use it in your browser with no sign-up.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>How do I report a bug?</dt>
+              <dd>Please report bugs via <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">GitHub issues</a>. We’ll look into it as soon as we can.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
     </main>
 
     <footer class="app-footer">
-      <section class="faq-section" aria-labelledby="faq-heading">
-        <details class="faq-details">
-          <summary id="faq-heading" class="faq-summary">Frequently asked questions</summary>
-          <dl class="faq-list">
-            <dt>Why does ChatGPT remove my formatting?</dt>
-            <dd>ChatGPT and most AI chat interfaces accept plain text only. Bold, colors, and headings are stripped. RetainFormat converts them into explicit tags (e.g. &lt;Answer&gt;, &lt;Question&gt;) so the AI keeps your structure.</dd>
-            <dt>How do I keep bold and colors when pasting into AI?</dt>
-            <dd>Paste your text here, click Parse formatting, assign a meaning to each style (e.g. bold = Question), then Generate text and copy. Paste that tagged output into ChatGPT, Claude, or Gemini.</dd>
-            <dt>Can I use this with text from Word or Google Docs?</dt>
-            <dd>Yes. Paste from Word, Docs, PDF, or email. RetainFormat detects bold, italic, colors, and alignment and turns them into semantic tags for AI.</dd>
-            <dt>Is RetainFormat free?</dt>
-            <dd>Yes. Use it in your browser with no sign-up.</dd>
-            <dt>How do I report a bug?</dt>
-            <dd>Please report bugs via <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">GitHub issues</a>. We’ll look into it as soon as we can.</dd>
-          </dl>
-        </details>
-      </section>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="/">Text to Tags</a>
+        <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">Support</a>
+      </nav>
       <div class="legal-notice">
         <p><strong>Disclaimer</strong></p>
         <ul>
