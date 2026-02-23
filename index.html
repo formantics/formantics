@@ -94,7 +94,7 @@
     <header class="app-header">
       <nav class="nav-inner" aria-label="Main">
         <a href="/" class="nav-logo-link">
-          <img src="assets/logo.png" alt="RetainFormat – Preserve formatting for ChatGPT and AI" class="app-logo" />
+          <img src="assets/logo.png" alt="RetainFormat – Preserve formatting for ChatGPT and AI" class="app-logo" width="100" height="40" decoding="async" />
         </a>
         <ul class="nav-links">
           <li><a href="/" class="nav-link">Home</a></li>
@@ -134,8 +134,9 @@
               id="lightThemeBtn"
               class="theme-toggle-btn is-active"
               type="button"
-              aria-pressed="true"
               role="radio"
+              aria-checked="true"
+              aria-label="Light theme"
             >
               Light
             </button>
@@ -143,8 +144,9 @@
               id="darkThemeBtn"
               class="theme-toggle-btn"
               type="button"
-              aria-pressed="false"
               role="radio"
+              aria-checked="false"
+              aria-label="Dark theme"
             >
               Dark
             </button>
@@ -173,7 +175,10 @@
           id="editor"
           class="editor"
           contenteditable="true"
+          role="textbox"
+          aria-multiline="true"
           aria-label="Rich text input"
+          aria-placeholder="Paste here from Word, Google Docs, PDFs, email, or the web…"
           spellcheck="true"
         ></div>
         <div class="panel-footer">
@@ -268,6 +273,7 @@
             id="outputEditor"
             class="editorOutput output-editor"
             contenteditable="false"
+            role="region"
             aria-label="Tagged text output"
           ></div>
         </div>
@@ -277,6 +283,7 @@
             id="outputPreview"
             class="editorOutput output-preview"
             contenteditable="false"
+            role="region"
             aria-label="Tagged text visual preview"
           ></div>
         </div>

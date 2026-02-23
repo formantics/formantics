@@ -85,21 +85,21 @@ function setTheme(theme) {
     body.classList.add("theme-dark");
   }
 
-  // Update toggle buttons
+  // Update toggle buttons (role="radio" uses aria-checked)
   if (isLight) {
     lightThemeBtn.classList.add("is-active");
     darkThemeBtn.classList.remove("is-active");
     lightThemeBtn.disabled = true;
     darkThemeBtn.disabled = false;
-    lightThemeBtn.setAttribute("aria-pressed", "true");
-    darkThemeBtn.setAttribute("aria-pressed", "false");
+    lightThemeBtn.setAttribute("aria-checked", "true");
+    darkThemeBtn.setAttribute("aria-checked", "false");
   } else {
     darkThemeBtn.classList.add("is-active");
     lightThemeBtn.classList.remove("is-active");
     darkThemeBtn.disabled = true;
     lightThemeBtn.disabled = false;
-    darkThemeBtn.setAttribute("aria-pressed", "true");
-    lightThemeBtn.setAttribute("aria-pressed", "false");
+    darkThemeBtn.setAttribute("aria-checked", "true");
+    lightThemeBtn.setAttribute("aria-checked", "false");
   }
 
   // Reset cached defaults so they are recalculated under the new theme
@@ -1250,7 +1250,7 @@ function sendFeedback(kind, email) {
       }, 2500);
     })
     .catch(function (err) {
-      console.error("Error writing feedback to Firebase:", err);
+      console.warn("Feedback write failed:", err);
       if (!feedbackStatus) return;
       feedbackStatus.textContent =
         "Feedback not saved (network issue).";

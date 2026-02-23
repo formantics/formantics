@@ -1258,16 +1258,23 @@ body.theme-dark .faq-list dd {
 }
 
 .faq-list a {
-  color: var(--color-accent);
-  text-decoration: none;
+  color: #4338ca;
+  text-decoration: underline;
+  text-decoration-color: rgba(67, 56, 202, 0.4);
+  text-underline-offset: 0.12em;
 }
 
 .faq-list a:hover {
-  text-decoration: underline;
+  text-decoration-color: #4338ca;
 }
 
 body.theme-dark .faq-list a {
-  color: var(--color-accent);
+  color: #818cf8;
+  text-decoration-color: rgba(129, 140, 248, 0.5);
+}
+
+body.theme-dark .faq-list a:hover {
+  text-decoration-color: #818cf8;
 }
 
 /* Legacy (details/summary) - keep for any old use */
