@@ -100,8 +100,8 @@
         <ul class="nav-links">
           <li><a href="/" class="nav-link">Home</a></li>
           <li><a href="/" class="nav-link nav-link-active" aria-current="page">Text to Tags</a></li>
+          <!-- <li><a href="pdf-to-tags.html" class="nav-link">PDF to Tags</a></li> -->
           <li><a href="/blog/" class="nav-link">Blog</a></li>
-          <!-- Future: add more tools here, e.g. Batch Convert, etc. -->
         </ul>
         <div class="nav-right">
           <div class="help-tooltip-wrap">
@@ -160,7 +160,10 @@
       <section class="hero">
         <h1 class="hero-title">Format for AI — Preserve Formatting for ChatGPT &amp; Fix Formatting Lost When You Paste</h1>
         <p class="hero-subtitle">
-          The free way to format text for AI and format document for AI. ChatGPT removes formatting when you paste; we convert your content to AI-readable tags so you preserve formatting in ChatGPT and structure text for AI.
+          A free way to format text and document for AI.
+        </p>
+        <p class="hero-subtitle">
+          ChatGPT removes formatting when you paste into it; we convert your content into AI-readable tags so you preserve formatting and its structure text.
         </p>
       </section>
       <section class="tool-section" aria-label="RetainFormat tool">
@@ -201,7 +204,7 @@
         <div class="panel-header">
           <h2 id="detected-section-title">Assign meaning to each format</h2>
           <p class="panel-description">
-            Map each style to a meaning (e.g. red = Answer, bold = Question). ChatGPT not recognizing bold text or ignores highlights? Here you define what each format means so the AI keeps context.
+            Map each style to a meaning (e.g. red = Answer, bold = Question). Here you define what each format means so the AI keeps its context.
           </p>
         </div>
         <div id="detectedFormattingContainer" class="detected-list empty-state">
@@ -225,7 +228,7 @@
         <div class="panel-header">
           <h2 id="output-section-title">Copy AI-ready tagged output</h2>
           <p class="panel-description">
-            Plain text with semantic tags — an AI-readable format. Copy and paste into ChatGPT, Claude, or Gemini to preserve formatting in ChatGPT and avoid document structure lost in AI.
+            Plain text with semantic tags — an AI-readable format. Copy and paste below output into ChatGPT, Claude, or Gemini to preserve formatting in ChatGPT and avoid document structure loss in AI.
           </p>
         </div>
         <div class="output-controls">
@@ -297,28 +300,50 @@
       <section class="example-section" aria-labelledby="example-heading">
         <h2 id="example-heading" class="section-heading">Format for AI: see how it works</h2>
         <p class="example-intro">
-          When formatting disappears when pasting into ChatGPT, AI loses context. RetainFormat converts your formatted text into a structured format (tags) so you preserve document structure for AI and fix why ChatGPT summary is wrong.
+          Formatting disappears when pasting into ChatGPT, thus, AI loses context. RetainFormat converts your formatted text into a structured format (tags) so you preserve document structure for AI and fix why ChatGPT summary is wrong.
         </p>
         <div class="example-blocks">
           <div class="example-block">
             <h3 class="example-label">Formatted input (from Word, email, etc.)</h3>
             <div class="example-box example-input">
               <p class="example-line"><strong>What is the capital of France?</strong></p>
-              <p class="example-line" style="color: #b91c1c;">Paris is the capital.</p>
-              <p class="example-line"><em>Additional note:</em> It has been since the 10th century.</p>
+              <p class="example-line" style="color: #b91c1c;">Rome is the capital.</p>
+              <p class="example-line" style="color: #187f06;">Paris is the capital.</p>
             </div>
           </div>
           <div class="example-arrow" aria-hidden="true">→</div>
           <div class="example-block">
-            <h3 class="example-label">AI-readable format (tagged output)</h3>
+            <h3 class="example-label">Before using this tool (correct context for AI is lost):</h3>
             <div class="example-box example-output">
-              <p class="example-line">&lt;Question&gt; What is the capital of France? &lt;/Question&gt;</p>
-              <p class="example-line">&lt;Answer&gt; Paris is the capital. &lt;/Answer&gt;</p>
-              <p class="example-line">&lt;Note&gt; Additional note: It has been since the 10th century. &lt;/Note&gt;</p>
+              <p class="example-line">What is the capital of France? </p>
+              <p class="example-line">Rome is the capital.</p>
+              <p class="example-line">Paris is the capital.</p>
             </div>
           </div>
         </div>
-        <p class="example-cta">Format for AI in seconds: paste your text above, assign meanings to each format, then copy the tagged output into ChatGPT, Claude, or Gemini. Free format-for-AI tool — no sign-up.</p>
+
+        <div class="example-blocks">
+          <div class="example-block">
+            <h3 class="example-label">Formatted input (from Word, email, etc.)</h3>
+            <div class="example-box example-input">
+              <p class="example-line"><strong>What is the capital of France?</strong></p>
+              <p class="example-line" style="color: #b91c1c;">Rome is the capital.</p>
+              <p class="example-line" style="color: #187f06;">Paris is the capital.</p>           </div>
+          </div>
+          <div class="example-arrow" aria-hidden="true">→</div>
+          <div class="example-block">
+            <h3 class="example-label">After using this tool (correct context for AI):</h3>
+            <div class="example-box example-output">
+              <p class="example-line">&lt;Question&gt; What is the capital of France? &lt;/Question&gt;</p>
+              <p class="example-line">&lt;Incorrect Answer&gt; Rome is the capital. &lt;/Incorrect Answer&gt;</p>
+              <p class="example-line">&lt;Correct Answer&gt; Paris is the capital. &lt;/Correct Answer&gt;</p>
+            </div>
+          </div>
+        </div>
+
+
+        <p class="example-cta">Format for AI in seconds: paste your text above, assign meanings to each format, then copy the tagged output into ChatGPT, Claude, or Gemini.</p>
+        <p class="example-cta">Free format-for-AI tool — no sign-up.</p>
       </section>
 
       <section class="faq-section" aria-labelledby="faq-heading">
@@ -381,6 +406,7 @@
     <footer class="app-footer">
       <nav class="footer-nav" aria-label="Footer">
         <a href="/">Text to Tags</a>
+        <a href="pdf-to-tags.html">PDF to Tags</a>
         <a href="/blog/">Blog</a>
         <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">Support</a>
       </nav>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF to Tags | RetainFormat – Convert PDF into AI-Ready Tags</title>
+    <meta
+      name="description"
+      content="Convert PDF into tags for AI. Upload your PDF, assign meaning to each format, get AI-ready tagged output for ChatGPT, Claude, and Gemini. Free — no sign-up."
+    />
+    <link rel="canonical" href="https://www.retainformat.com/pdf-to-tags.html" />
+    <link rel="icon" type="image/png" href="https://www.retainformat.com/assets/logo.png" sizes="48x48" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="theme-light">
+    <header class="app-header">
+      <nav class="nav-inner" aria-label="Main">
+        <a href="/" class="nav-logo-link">
+          <img src="assets/logo.png" alt="RetainFormat" class="app-logo" width="100" height="40" decoding="async" />
+        </a>
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/" class="nav-link">Text to Tags</a></li>
+          <li><a href="pdf-to-tags.html" class="nav-link nav-link-active" aria-current="page">PDF to Tags</a></li>
+          <li><a href="/blog/" class="nav-link">Blog</a></li>
+        </ul>
+        <div class="nav-right">
+          <div class="help-tooltip-wrap">
+            <button
+              id="helpTooltipBtn"
+              class="help-tooltip-btn"
+              type="button"
+              aria-label="How to use PDF to Tags"
+              aria-expanded="false"
+              aria-controls="helpTooltipPopover"
+            >
+              ?
+            </button>
+            <div
+              id="helpTooltipPopover"
+              class="help-tooltip-popover"
+              role="tooltip"
+              aria-hidden="true"
+              hidden
+            >
+              <p class="help-tooltip-title">How to use PDF to Tags</p>
+              <ol class="help-tooltip-steps">
+                <li>Upload your PDF (invoice, document, etc.) in the <strong>Upload your PDF</strong> section.</li>
+                <li>Assign a meaning to each format shown (e.g. red text = Answer, bold = Question).</li>
+                <li>Click <strong>Generate text</strong>, then <strong>Copy output</strong> to paste into your AI tool.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="theme-toggle" aria-label="Background theme" role="radiogroup">
+            <button id="lightThemeBtn" class="theme-toggle-btn is-active" type="button" role="radio" aria-checked="true" aria-label="Light theme">Light</button>
+            <button id="darkThemeBtn" class="theme-toggle-btn" type="button" role="radio" aria-checked="false" aria-label="Dark theme">Dark</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="app-main" aria-label="PDF to Tags">
+      <section class="hero">
+        <h1 class="hero-title">Convert PDF into AI-ready tags</h1>
+        <p class="hero-subtitle">
+          Upload your PDF. We extract the text, then you assign meaning to each format and get tagged output for ChatGPT, Claude, or Gemini — same flow as Text to Tags.
+        </p>
+      </section>
+      <section class="tool-section" aria-label="PDF to Tags tool">
+        <h2 class="tool-section-title">Upload PDF, then assign meanings and copy output</h2>
+
+        <section class="panel" aria-labelledby="input-section-title">
+          <div class="panel-header">
+            <h2 id="input-section-title">Upload your PDF</h2>
+            <p class="panel-description">
+              Choose a PDF file. We extract the text and show it below. Then click Parse formatting, assign a meaning to each format (if any), and Generate to get AI-ready tagged output.
+            </p>
+          </div>
+          <div class="pdf-upload-zone">
+            <label for="pdfFileInput">Choose a PDF file</label>
+            <input type="file" id="pdfFileInput" accept=".pdf,application/pdf" />
+            <p id="pdfStatus" class="pdf-status" aria-live="polite"></p>
+          </div>
+          <div id="pdfExtractArea">
+            <div
+              id="editor"
+              class="editor"
+              contenteditable="true"
+              role="textbox"
+              aria-multiline="true"
+              aria-label="Extracted text from PDF"
+              aria-placeholder="Upload a PDF to extract text here…"
+              spellcheck="true"
+            ></div>
+          </div>
+          <div class="panel-footer">
+            <button id="parseBtn" class="primary-btn" type="button" disabled>Parse formatting</button>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="detected-section-title">
+          <div class="panel-header">
+            <h2 id="detected-section-title">Assign meaning to each format</h2>
+            <p class="panel-description">
+              Map each style to a meaning (e.g. red = Answer, bold = Question). Only formats in your text are listed.
+            </p>
+          </div>
+          <div id="detectedFormattingContainer" class="detected-list empty-state">
+            <p class="empty-message">Upload a PDF and click <strong>Parse formatting</strong> to see detected formats.</p>
+          </div>
+          <div class="panel-footer">
+            <button id="generateBtn" class="primary-btn" type="button" disabled>Generate text</button>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="output-section-title">
+          <div class="panel-header">
+            <h2 id="output-section-title">Copy AI-ready tagged output</h2>
+            <p class="panel-description">
+              Plain text with semantic tags. Copy and paste into ChatGPT, Claude, or Gemini.
+            </p>
+          </div>
+          <div class="output-controls">
+            <div class="output-controls-main">
+              <button id="copyBtn" class="primary-btn" type="button" disabled>Copy output</button>
+              <span id="copyStatus" class="copy-status" aria-live="polite"></span>
+            </div>
+            <div class="feedback-bar">
+              <span class="feedback-label-inline">How is RetainFormat working for you?</span>
+              <div class="feedback-buttons">
+                <button id="feedbackLikeBtn" class="feedback-btn feedback-like" type="button">👍 Like</button>
+                <button id="feedbackDislikeBtn" class="feedback-btn feedback-dislike" type="button">👎 Dislike</button>
+                <button id="feedbackQuestionBtn" class="feedback-btn feedback-question" type="button">❓ Question</button>
+              </div>
+              <span id="feedbackStatus" class="feedback-status" aria-live="polite"></span>
+            </div>
+          </div>
+          <div class="output-block">
+            <div class="output-label">Plain tagged text</div>
+            <div id="outputEditor" class="editorOutput output-editor" contenteditable="false" role="region" aria-label="Tagged text output"></div>
+          </div>
+          <div class="output-block">
+            <div class="output-label">Preview to check the tags inserted</div>
+            <div id="outputPreview" class="editorOutput output-preview" contenteditable="false" role="region" aria-label="Tagged text visual preview"></div>
+          </div>
+          <p class="hint">Order is preserved. Tags appear only where you assigned a meaning.</p>
+        </section>
+      </section>
+
+      <section class="example-section" aria-labelledby="example-heading">
+        <h2 id="example-heading" class="section-heading">Format for AI: see how it works</h2>
+        <p class="example-intro">
+          When you upload a PDF, we extract the text. You then assign meaning to each format and get AI-ready tagged output — same idea as pasting from Word or email.
+        </p>
+        <div class="example-blocks">
+          <div class="example-block">
+            <h3 class="example-label">Input from PDF (invoice, document, report, etc.)</h3>
+            <div class="example-box example-input">
+              <p class="example-line"><strong>Invoice #1234</strong></p>
+              <p class="example-line">Item: Consulting — $500</p>
+              <p class="example-line" style="color: #187f06;">Due: 30 days</p>
+            </div>
+          </div>
+          <div class="example-arrow" aria-hidden="true">→</div>
+          <div class="example-block">
+            <h3 class="example-label">AI-readable format (tagged output)</h3>
+            <div class="example-box example-output">
+              <p class="example-line">&lt;Title&gt; Invoice #1234 &lt;/Title&gt;</p>
+              <p class="example-line">&lt;Line Item&gt; Item: Consulting — $500 &lt;/Line Item&gt;</p>
+              <p class="example-line">&lt;Due&gt; Due: 30 days &lt;/Due&gt;</p>
+            </div>
+          </div>
+        </div>
+        <p class="example-cta">Upload your PDF above, assign meanings to each format, then copy the tagged output into ChatGPT, Claude, or Gemini. Free — no sign-up.</p>
+      </section>
+
+      <section class="faq-section" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" class="section-heading">Frequently asked questions</h2>
+        <div class="faq-list-wrapper">
+          <dl class="faq-list">
+            <div class="faq-item">
+              <dt>Can I convert a PDF to tags for ChatGPT or AI?</dt>
+              <dd>Yes. Use PDF to Tags: upload your PDF, we extract the text in your browser, then you assign meaning to each format (e.g. bold = Question, red = Answer) and generate. Copy the tagged output and paste into ChatGPT, Claude, or Gemini so the AI keeps your structure.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Why does my PDF show “No text could be extracted”?</dt>
+              <dd>That usually means the PDF is image-only (e.g. a scanned invoice or a photo of a document). We can only extract text from PDFs that have a text layer. Try a PDF where you can select and copy text, or copy the text manually and use <a href="/">Text to Tags</a> instead.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>How do I turn a PDF into AI-ready format?</dt>
+              <dd>Upload the PDF on this page. We extract the text, you click Parse formatting, assign a meaning to each style (e.g. headings = Section, bold = Question), then Generate text and copy. The result is plain text with semantic tags — an AI-readable format you can paste into any AI tool.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Can I use PDF to Tags for invoices or documents?</dt>
+              <dd>Yes. PDF to Tags works for any PDF with selectable text: invoices, reports, contracts, or notes. Upload the file, assign meanings to formats (e.g. amounts, dates, line items), and get tagged output for summarization or analysis in ChatGPT, Claude, or Gemini.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Is my PDF stored or sent to a server?</dt>
+              <dd>No. Text extraction runs in your browser only. We do not upload, store, or see your PDF or its content.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>Is PDF to Tags free?</dt>
+              <dd>Yes. Use it in your browser with no sign-up.</dd>
+            </div>
+            <div class="faq-item">
+              <dt>How do I report a bug?</dt>
+              <dd>Please report bugs via <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">GitHub issues</a>. We’ll look into it as soon as we can.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="/">Text to Tags</a>
+        <a href="pdf-to-tags.html">PDF to Tags</a>
+        <a href="/blog/">Blog</a>
+        <a href="https://github.com/meghana-shettigar/formantics/issues/new/" target="_blank" rel="noopener noreferrer">Support</a>
+      </nav>
+      <div class="legal-notice">
+        <p><strong>Disclaimer</strong></p>
+        <ul>
+          <li>You are responsible for the content you upload and how you use it. RetainFormat does not store your PDF; text is extracted in your browser only.</li>
+        </ul>
+      </div>
+      <p class="app-credits">© 2026 RetainFormat. All rights reserved.</p>
+    </footer>
+
+    <div id="feedbackModal" class="feedback-modal" aria-hidden="true">
+      <div class="feedback-modal-backdrop"></div>
+      <div class="feedback-modal-content" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle">
+        <h2 id="feedbackModalTitle" class="feedback-modal-title">Share feedback (optional email)</h2>
+        <p class="feedback-modal-description">If you’d like to be contacted about this feedback, you can leave an email address. This is optional.</p>
+        <form id="feedbackForm" class="feedback-form">
+          <input type="hidden" id="feedbackTypeField" />
+          <label class="feedback-input-label" for="feedbackEmailInput">Email address (optional)</label>
+          <input id="feedbackEmailInput" class="feedback-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" />
+          <div class="feedback-modal-actions">
+            <button type="button" id="feedbackCancelBtn" class="secondary-btn feedback-cancel-btn">Skip</button>
+            <button type="submit" class="primary-btn feedback-submit-btn">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script>
+      window.RETAINFORMAT_FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDmLz9MgPtzjg51nprVDmqJD0R9PadLWLo",
+        authDomain: "formantics-feedback.firebaseapp.com",
+        projectId: "formantics-feedback",
+        storageBucket: "formantics-feedback.firebasestorage.app",
+        messagingSenderId: "366267284351",
+        appId: "1:366267284351:web:d88c55c6a7e2b17456784a"
+      };
+      if (window.RETAINFORMAT_FIREBASE_CONFIG && window.RETAINFORMAT_FIREBASE_CONFIG.projectId) {
+        firebase.initializeApp(window.RETAINFORMAT_FIREBASE_CONFIG);
+        window._retainformatDb = firebase.firestore();
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+      if (typeof pdfjsLib !== "undefined") {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      }
+    </script>
+    <script src="app.js"></script>
+    <script src="pdf-upload.js"></script>
+  </body>
+</html>
