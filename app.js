@@ -509,13 +509,13 @@ function buildDetectedFormattingUI(found) {
           bulletSpan.textContent = displayChar;
           bulletSpan.setAttribute("aria-hidden", "true");
           wrap.appendChild(bulletSpan);
-         // var textSpan = document.createElement("span");
-          //textSpan.textContent = " " + shortLabel + levelHint;
-         // textSpan.textContent = " ";
-         // textSpan.setAttribute("aria-hidden", "true");
-        //  console.log("textSpan megha1", textSpan);
-         // console.log("wrap megha2", wrap);
-        //  wrap.appendChild(textSpan);
+          // var textSpan = document.createElement("span");
+          // textSpan.textContent = " " + shortLabel + levelHint;
+          // textSpan.textContent = " ";
+          // textSpan.setAttribute("aria-hidden", "true");
+          // console.log("textSpan megha1", textSpan);
+          // console.log("wrap megha2", wrap);
+          // wrap.appendChild(textSpan);
           console.log("preview megha3", preview);
           preview.appendChild(wrap);
         });
@@ -827,15 +827,15 @@ function buildSegmentedText(activeFormats) {
     var fmt = activeFormats.find(function (f) {
       if (f.userLabel === formatLabel) return true;
       if (f.kind === "bullet" && formatLabel.indexOf(f.userLabel + " ") === 0) return true;
-      console.log("f megha16", f);
+     // console.log("f megha16", f);
       return false;
     });
     if (!fmt) return null;
-    console.log("fmt megha15", fmt);
+    //console.log("fmt megha15", fmt);
 
     var el = textNode.parentElement;
     if (!el) return null;
-    console.log("el megha10", el);
+    //console.log("el megha10", el);
     // Check if this element or an ancestor has the format
     var checkEl = el;
     while (checkEl && checkEl !== editor.parentNode) {
@@ -843,10 +843,10 @@ function buildSegmentedText(activeFormats) {
       var defaultColor = editorDefaultColor;
       var defaultAlign = editorDefaultTextAlign;
       var defaultWeight = editorDefaultWeight;
-      console.log("style megha11", style);
-      console.log("defaultColor megha12", defaultColor);
-      console.log("defaultAlign megha13", defaultAlign);
-      console.log("defaultWeight megha14", defaultWeight);
+     // console.log("style megha11", style);
+     // console.log("defaultColor megha12", defaultColor);
+     // console.log("defaultAlign megha13", defaultAlign);
+     // console.log("defaultWeight megha14", defaultWeight);
       var matches = false;
       if (fmt.kind === "bold") {
         var weightStr = style.fontWeight;
@@ -988,7 +988,22 @@ function buildSegmentedText(activeFormats) {
     return FORMAT_LAYERS.visual;
   }
 
+  // List depth for a bullet tag (from format key e.g. disc_L1 -> 1). Non-bullet tags return 0 so they sort first by priority only.
+  function getTagDepth(tag) {
+    if (!isBulletTag(tag)) return 0;
+    for (var fi = 0; fi < activeFormats.length; fi++) {
+      var fmt = activeFormats[fi];
+      if (fmt.kind === "bullet" && tag.indexOf(fmt.userLabel + " ") === 0) {
+        var match = (fmt.key || "").match(/_L(\d+)$/);
+        return match ? parseInt(match[1], 10) : 0;
+      }
+    }
+    return 0;
+  }
+
   // Find the LI that owns this bullet tag (same logic as label assignment).
+  // Find the LI that owns this bullet tag. Use the LI's bullet index (info.index) only, not segment index,
+  // so we find the owner even when the current node is in a nested list under that LI (e.g. "A1" under "A").
   function getOwnerLIForBulletTag(textNode, bulletTag) {
     if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return null;
     for (var ei = 0; ei < liElements.length; ei++) {
@@ -997,12 +1012,7 @@ function buildSegmentedText(activeFormats) {
       if (!info) continue;
       var fmt = activeFormats.find(function (f) { return f.kind === "bullet" && f.key === info.key; });
       if (!fmt) continue;
-      var indexToUse = info.index;
-      if (getSegmentIndexForNode) {
-        var seg = getSegmentIndexForNode(li, textNode);
-        if (seg != null) indexToUse = seg;
-      }
-      var label = fmt.userLabel + " " + indexToUse;
+      var label = fmt.userLabel + " " + info.index;
       if (label === bulletTag) return li;
     }
     return null;
@@ -1040,14 +1050,25 @@ function buildSegmentedText(activeFormats) {
 
     console.log("[TAG_OUTPUT] idx=" + idx + " text~=" + JSON.stringify(textPreview) + " | labels=" + JSON.stringify(textNodeLabels) + " | openTags(before close)=" + JSON.stringify(openTags));
 
-    // Close tags so inner are always closed before outer: find the first (outermost) tag that needs closing,
-    // then close from the end of openTags down to that index (so we close </imp></main tag 1>, not </main tag 1></imp>).
-    // No sort, no extra array, no variable shadowing — one pass to find min index, then one loop to close.
+    // Stack rule: outer tags go in first; don't close an outer (lower-depth) bullet until all inner (higher-depth) are closed.
+    // So: only close a bullet tag if current labels do NOT contain any bullet with depth > this tag's depth.
     var minCloseIdx = openTags.length;
     for (var ci = 0; ci < openTags.length; ci++) {
       var tagToClose = openTags[ci];
       if (textNodeLabels.indexOf(tagToClose) !== -1) continue;
-      if (isBulletTag(tagToClose) && isNodeInBulletScope(currentNode, tagToClose)) continue;
+      if (isBulletTag(tagToClose)) {
+        var depthOfTag = getTagDepth(tagToClose);
+        var hasDeeperBulletInLabels = false;
+        for (var li = 0; li < textNodeLabels.length; li++) {
+          if (isBulletTag(textNodeLabels[li]) && getTagDepth(textNodeLabels[li]) > depthOfTag) {
+            hasDeeperBulletInLabels = true;
+            break;
+          }
+        }
+        if (hasDeeperBulletInLabels) continue;
+      } else if (isNodeInBulletScope(currentNode, tagToClose)) {
+        continue;
+      }
       if (ci < minCloseIdx) minCloseIdx = ci;
     }
     for (var cj = openTags.length - 1; cj >= minCloseIdx; cj--) {
@@ -1068,18 +1089,21 @@ function buildSegmentedText(activeFormats) {
       }
     }
 
-    // Open in priority order: structural first, then semantic, then visual (so when we close in reverse we get </highlight></bullet>).
-    // Use getNestedOrder for DOM order within same priority; sort by priority first.
+    // Open in order: priority (structural, semantic, visual), then for bullets by depth (depth 1, then 2, then 3), then DOM nesting.
+    // So we open outer bullets before inner, and when we close in reverse order we close inner (higher depth) before outer.
     var nestedOrder = getNestedOrder(item.node, tagsToOpen);
     tagsToOpen.sort(function (a, b) {
       var pa = getTagPriority(a);
       var pb = getTagPriority(b);
       if (pa !== pb) return pa - pb;
+      var da = getTagDepth(a);
+      var db = getTagDepth(b);
+      if (da !== db) return da - db;
       var ia = nestedOrder.indexOf(a);
       var ib = nestedOrder.indexOf(b);
       return ia - ib;
     });
-    console.log("  [TAG_OUTPUT] tagsToOpen=" + JSON.stringify(tagsToOpen) + " (priority order: structural then semantic then visual)");
+    console.log("  [TAG_OUTPUT] tagsToOpen=" + JSON.stringify(tagsToOpen) + " (priority then depth 1->2->3 then DOM)");
 
     // Open new tags (structural first, then semantic, then visual)
     for (var oi = 0; oi < tagsToOpen.length; oi++) {
