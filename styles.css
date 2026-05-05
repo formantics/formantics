@@ -1628,14 +1628,6 @@ body.theme-dark .post-ready-textarea {
   margin-bottom: 0;
 }
 
-.post-ready-output-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
 /* Rich paste input (Post-ready): taller than main tool editor */
 .post-ready-input-editor.editor {
   min-height: 280px;
@@ -1648,4 +1640,71 @@ body.theme-dark .post-ready-textarea {
 
 .post-ready-input-editor.editor:empty::before {
   content: "Paste from Grok, ChatGPT, or any assistant (⌘V / Ctrl+V)…";
+}
+
+.panel-footer.post-ready-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.post-ready-char-meter {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-subtle-light);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted-light);
+}
+
+body.theme-dark .post-ready-char-meter {
+  border-top-color: var(--color-border-subtle-dark);
+  color: var(--color-text-muted-dark);
+}
+
+.post-ready-char-count {
+  font-weight: 600;
+  color: var(--color-text-light);
+}
+
+body.theme-dark .post-ready-char-count {
+  color: var(--color-text-dark);
+}
+
+.post-ready-limit-over {
+  margin-top: 6px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+body.theme-dark .post-ready-limit-over {
+  color: #f87171;
+}
+
+.post-ready-output-preview.output-preview {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.post-ready-how-list {
+  margin: 0;
+  padding-left: 1.35rem;
+  max-width: 720px;
+  color: var(--color-text-muted-light);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+body.theme-dark .post-ready-how-list {
+  color: var(--color-text-muted-dark);
+}
+
+.post-ready-how-list li {
+  margin-bottom: 14px;
+}
+
+.post-ready-how-list li:last-child {
+  margin-bottom: 0;
 }

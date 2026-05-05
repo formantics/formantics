@@ -3,22 +3,71 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Post-ready text — keep line breaks &amp; indents | RetainFormat</title>
+    <title>Post-ready text for X — keep formatting from Grok &amp; ChatGPT | RetainFormat</title>
     <meta
       name="description"
-      content="Paste AI chat output and copy text that keeps line breaks and indentation for X, Threads, and other apps. Free — no sign-up."
+      content="Paste formatted AI replies into RetainFormat, generate plain text with preserved line breaks, bullets, and Unicode bold for X (Twitter), and see character count versus the 280-character limit. Free — no sign-up."
     />
     <link rel="canonical" href="https://www.retainformat.com/post-ready-text.html" />
     <link rel="icon" type="image/png" href="https://www.retainformat.com/assets/logo.png" sizes="48x48" />
     <link rel="stylesheet" href="styles.css" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Post-ready text | RetainFormat" />
+    <meta property="og:title" content="Post-ready text for X | RetainFormat" />
     <meta
       property="og:description"
-      content="Paste from Grok or ChatGPT and keep line breaks and indentation when posting to X and similar platforms."
+      content="Paste from Grok or ChatGPT, generate copy-ready text for X with breaks and bullets, and check length against the 280-character limit."
     />
     <meta property="og:url" content="https://www.retainformat.com/post-ready-text.html" />
     <meta property="og:image" content="https://www.retainformat.com/assets/logo.png" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why does my Grok or ChatGPT reply lose formatting when I paste into X?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Many composers normalize plain text: leading spaces collapse and structure can flatten. RetainFormat lets you paste HTML from the chat into a rich box, then Generate produces plain text with preserved line breaks, bullet lines, and indentation using non-breaking spaces. Bold Latin letters and digits can become Unicode bold symbols so emphasis survives as plain text."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What does Generate and Generate & Copy do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Generate converts what you pasted into post-ready plain text: lists become lines starting with a bullet, indentation uses non-breaking spaces, and bold tags become Unicode bold where supported. Generate & Copy runs Generate and copies the result to your clipboard in one step."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What X post character limit do you use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We use 280 characters as the reference for a standard X post. Premium accounts may allow longer posts; treat the counter as a guide and trim in the output box if you need to fit the classic limit."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I edit the generated text before copying?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The plain output box is editable. When you delete or add characters, the character count and any over-limit message update immediately."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is my content uploaded to a server?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. RetainFormat runs in your browser; pasted and generated text stays on your device unless you copy it elsewhere."
+          }
+        }
+      ]
+    }
+    </script>
   </head>
   <body class="theme-light">
     <header class="app-header">
@@ -63,7 +112,7 @@
       <section class="hero">
         <h1 class="hero-title">Post-ready text</h1>
         <p class="hero-subtitle">
-          Paste AI output below — formatting from Grok and similar chats is preserved in the box — then click Generate and Copy for X and other apps.
+          Paste AI output below — formatting from Grok and similar chats is preserved in the box — then Generate (or Generate &amp; Copy) for X and other apps.
         </p>
       </section>
 
@@ -83,8 +132,11 @@
           aria-labelledby="post-ready-input-title"
           spellcheck="true"
         ></div>
-        <div class="panel-footer">
+        <div class="panel-footer post-ready-actions">
           <button id="postReadyGenerateBtn" class="primary-btn" type="button" disabled>Generate</button>
+          <button id="postReadyGenerateCopyBtn" class="primary-btn" type="button" disabled>
+            Generate &amp; Copy
+          </button>
         </div>
       </section>
 
@@ -92,22 +144,97 @@
         <div class="panel-header">
           <h2 id="post-ready-output-title">Copy for your post</h2>
           <p class="panel-description">
-            Copy this block into your platform’s composer. Line breaks match your input; indentation uses non-breaking spaces so it survives paste.
+            Plain text for your composer: bold letters become Unicode bold where possible; bullets and line breaks follow your pasted structure; indentation uses non-breaking spaces. Use <strong>Copy output</strong> after Generate, or <strong>Generate &amp; Copy</strong> above for one step. You can edit the plain text below — the character counter updates as you type.
           </p>
         </div>
-        <div class="post-ready-output-row">
-          <button id="postReadyCopyBtn" class="primary-btn" type="button" disabled>Copy</button>
-          <span id="postReadyCopyStatus" class="copy-status" aria-live="polite"></span>
+        <div class="output-controls">
+          <div class="output-controls-main">
+            <button id="postReadyCopyBtn" class="primary-btn" type="button" disabled>Copy output</button>
+            <span id="postReadyCopyStatus" class="copy-status" aria-live="polite"></span>
+          </div>
         </div>
-        <label class="sr-only" for="postReadyOutput">Generated text</label>
-        <textarea
-          id="postReadyOutput"
-          class="post-ready-textarea post-ready-textarea-output"
-          rows="12"
-          readonly
-          spellcheck="false"
-          aria-label="Generated post-ready text"
-        ></textarea>
+        <div class="output-block">
+          <div class="output-label">Plain post-ready text</div>
+          <div
+            id="postReadyOutput"
+            class="editorOutput output-editor"
+            contenteditable="true"
+            role="region"
+            aria-label="Generated post-ready plain text"
+            spellcheck="true"
+          ></div>
+        </div>
+        <div class="output-block">
+          <div class="output-label">Preview</div>
+          <div
+            id="postReadyPreview"
+            class="editorOutput output-preview post-ready-output-preview"
+            contenteditable="false"
+            role="region"
+            aria-label="Reading preview of generated text"
+          ></div>
+        </div>
+        <div id="postReadyCharMeter" class="post-ready-char-meter" aria-live="polite">
+          <span id="postReadyCharCount" class="post-ready-char-count">0 characters</span>
+          <span class="post-ready-char-limit-note"> · Standard X post limit: <strong id="postReadyLimitDisplay">280</strong> characters</span>
+          <div id="postReadyLimitOver" class="post-ready-limit-over" hidden></div>
+        </div>
+      </section>
+
+      <section class="example-section" aria-labelledby="post-ready-how-heading">
+        <h2 id="post-ready-how-heading" class="section-heading">How it works</h2>
+        <p class="example-intro">
+          RetainFormat bridges rich replies from AI chats and plain-text social composers. You paste HTML from the assistant, we turn it into structured plain text that survives paste into X and similar apps.
+        </p>
+        <ol class="post-ready-how-list">
+          <li>
+            <strong>Copy from Grok (or another assistant)</strong> the reply that includes bullets and bold. Paste into <em>Paste your text</em>. The box keeps structure because it accepts HTML, not only plain text.
+          </li>
+          <li>
+            Click <strong>Generate</strong> to build post-ready plain text: bullet lists become lines with a bullet character, leading indentation becomes non-breaking spaces, and bold becomes Unicode bold symbols where supported.
+          </li>
+          <li>
+            Click <strong>Copy output</strong>, or use <strong>Generate &amp; Copy</strong> to generate and copy in one click. Paste into X or Threads. Edit the plain box first if you need to shorten — the counter compares length to a <strong>280-character</strong> reference for standard posts.
+          </li>
+        </ol>
+      </section>
+
+      <section class="faq-section" aria-labelledby="post-ready-faq-heading">
+        <h2 id="post-ready-faq-heading" class="section-heading">Frequently asked questions</h2>
+        <div class="faq-list-wrapper">
+          <dl class="faq-list">
+            <div class="faq-item">
+              <dt>Why does my Grok or ChatGPT reply lose formatting when I paste into X?</dt>
+              <dd>
+                Many composers normalize plain text: spaces at the start of lines collapse and layout flattens. Here you paste the rich reply first; <strong>Generate</strong> produces plain text with preserved breaks, bullet lines, and indentation (via non-breaking spaces). Bold can appear as Unicode bold letters so it still reads as emphasis in plain text.
+              </dd>
+            </div>
+            <div class="faq-item">
+              <dt>What do Generate and Generate &amp; Copy do?</dt>
+              <dd>
+                <strong>Generate</strong> converts your pasted content into one plain-text block ready for social apps. <strong>Generate &amp; Copy</strong> does the same and immediately copies that text to your clipboard.
+              </dd>
+            </div>
+            <div class="faq-item">
+              <dt>Which character limit should I use for X?</dt>
+              <dd>
+                We show counts against <strong>280 characters</strong>, the familiar limit for standard posts. X Premium may allow longer posts — use the counter as a guide and shorten in the output box if you want to stay within the classic limit.
+              </dd>
+            </div>
+            <div class="faq-item">
+              <dt>Can I trim the text after generating?</dt>
+              <dd>
+                Yes. The plain output area is editable. Delete characters to fit your limit; the total updates live. If you pass the reference limit, you’ll see how many characters you’re over.
+              </dd>
+            </div>
+            <div class="faq-item">
+              <dt>Does RetainFormat store what I paste?</dt>
+              <dd>
+                No. Processing happens in your browser unless you copy text elsewhere yourself.
+              </dd>
+            </div>
+          </dl>
+        </div>
       </section>
     </main>
 

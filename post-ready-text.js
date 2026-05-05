@@ -1,12 +1,64 @@
 (function () {
   var inputEl = document.getElementById("postReadyInput");
   var outputEl = document.getElementById("postReadyOutput");
+  var previewEl = document.getElementById("postReadyPreview");
   var generateBtn = document.getElementById("postReadyGenerateBtn");
+  var generateCopyBtn = document.getElementById("postReadyGenerateCopyBtn");
   var copyBtn = document.getElementById("postReadyCopyBtn");
   var copyStatus = document.getElementById("postReadyCopyStatus");
+  var charCountEl = document.getElementById("postReadyCharCount");
+  var overLimitEl = document.getElementById("postReadyLimitOver");
+  var limitDisplayEl = document.getElementById("postReadyLimitDisplay");
+
+  /** Reference limit for standard X posts (Premium may allow more). */
+  var X_POST_LIMIT = 280;
 
   var TAB_WIDTH = 4;
   var NBSP = "\u00a0";
+
+  if (limitDisplayEl) limitDisplayEl.textContent = String(X_POST_LIMIT);
+
+  function countCodePoints(str) {
+    var n = 0;
+    if (!str) return n;
+    for (var i = 0; i < str.length; ) {
+      var cp = str.codePointAt(i);
+      i += cp > 0xffff ? 2 : 1;
+      n++;
+    }
+    return n;
+  }
+
+  function getOutputText() {
+    return outputEl ? outputEl.textContent || "" : "";
+  }
+
+  function setOutputPlain(text) {
+    var t = text == null ? "" : String(text);
+    if (outputEl) outputEl.textContent = t;
+    if (previewEl) previewEl.textContent = t;
+    updateCharMeter(t);
+    syncButtons();
+  }
+
+  function updateCharMeter(text) {
+    var len = countCodePoints(text || "");
+    if (charCountEl) charCountEl.textContent = len + " characters";
+    var over = len - X_POST_LIMIT;
+    if (overLimitEl) {
+      if (over > 0) {
+        overLimitEl.textContent =
+          over +
+          " character" +
+          (over === 1 ? "" : "s") +
+          " above the X post limit";
+        overLimitEl.hidden = false;
+      } else {
+        overLimitEl.textContent = "";
+        overLimitEl.hidden = true;
+      }
+    }
+  }
 
   function rgbColorStringIsLight(cssColor) {
     if (!cssColor || typeof cssColor !== "string") return false;
@@ -192,9 +244,11 @@
   }
 
   function syncButtons() {
-    if (generateBtn) generateBtn.disabled = !editorHasContent();
-    if (copyBtn)
-      copyBtn.disabled = !(outputEl && (outputEl.value || "").length > 0);
+    var hasInput = editorHasContent();
+    var hasOut = getOutputText().length > 0;
+    if (generateBtn) generateBtn.disabled = !hasInput;
+    if (generateCopyBtn) generateCopyBtn.disabled = !hasInput;
+    if (copyBtn) copyBtn.disabled = !hasOut;
   }
 
   function sanitizeClipboardHtml(html) {
@@ -203,6 +257,59 @@
       .replace(/<iframe\b[\s\S]*?<\/iframe>/gi, "")
       .replace(/<object\b[\s\S]*?<\/object>/gi, "")
       .replace(/<embed\b[^>]*>/gi, "");
+  }
+
+  function runGenerate() {
+    if (!inputEl || !outputEl) return;
+    var raw = editorToRawPlain(inputEl);
+    var text = makePostReadyText(raw);
+    setOutputPlain(text);
+  }
+
+  function copyOutputToClipboard() {
+    var plainText = getOutputText();
+    if (!plainText) return;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(plainText).then(
+        function () {
+          if (copyStatus) copyStatus.textContent = "Copied.";
+          window.setTimeout(function () {
+            if (copyStatus) copyStatus.textContent = "";
+          }, 2000);
+        },
+        function () {
+          fallbackExecCopy(plainText);
+        }
+      );
+    } else {
+      fallbackExecCopy(plainText);
+    }
+  }
+
+  function fallbackExecCopy(plainText) {
+    var ta = document.createElement("textarea");
+    ta.value = plainText;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      var ok = document.execCommand("copy");
+      if (copyStatus)
+        copyStatus.textContent = ok
+          ? "Copied."
+          : "Unable to copy. Select the text manually.";
+    } catch (e) {
+      if (copyStatus)
+        copyStatus.textContent = "Unable to copy. Select the text manually.";
+    }
+    document.body.removeChild(ta);
+    window.setTimeout(function () {
+      if (copyStatus && copyStatus.textContent === "Copied.")
+        copyStatus.textContent = "";
+    }, 2000);
   }
 
   if (inputEl) {
@@ -241,53 +348,34 @@
     });
   }
 
+  if (outputEl) {
+    outputEl.addEventListener("input", function () {
+      var t = getOutputText();
+      if (previewEl) previewEl.textContent = t;
+      updateCharMeter(t);
+      syncButtons();
+    });
+  }
+
   if (generateBtn && inputEl && outputEl) {
     generateBtn.addEventListener("click", function () {
-      var raw = editorToRawPlain(inputEl);
-      outputEl.value = makePostReadyText(raw);
-      syncButtons();
+      runGenerate();
+    });
+  }
+
+  if (generateCopyBtn && inputEl && outputEl) {
+    generateCopyBtn.addEventListener("click", function () {
+      runGenerate();
+      copyOutputToClipboard();
     });
   }
 
   if (copyBtn && outputEl) {
     copyBtn.addEventListener("click", function () {
-      var plainText = outputEl.value || "";
-      if (!plainText) return;
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(plainText).then(
-          function () {
-            if (copyStatus) copyStatus.textContent = "Copied.";
-            window.setTimeout(function () {
-              if (copyStatus) copyStatus.textContent = "";
-            }, 2000);
-          },
-          function () {
-            if (copyStatus)
-              copyStatus.textContent =
-                "Unable to copy. Select the text manually.";
-          }
-        );
-      } else {
-        outputEl.focus();
-        outputEl.select();
-        try {
-          var ok = document.execCommand("copy");
-          if (copyStatus)
-            copyStatus.textContent = ok
-              ? "Copied."
-              : "Select the text and copy manually.";
-        } catch (e) {
-          if (copyStatus)
-            copyStatus.textContent = "Select the text and copy manually.";
-        }
-        window.setTimeout(function () {
-          if (copyStatus && copyStatus.textContent === "Copied.")
-            copyStatus.textContent = "";
-        }, 2000);
-      }
+      copyOutputToClipboard();
     });
   }
 
+  updateCharMeter("");
   syncButtons();
 })();
