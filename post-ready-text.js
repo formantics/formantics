@@ -1,7 +1,6 @@
 (function () {
   var inputEl = document.getElementById("postReadyInput");
   var outputEl = document.getElementById("postReadyOutput");
-  var previewEl = document.getElementById("postReadyPreview");
   var generateBtn = document.getElementById("postReadyGenerateBtn");
   var generateCopyBtn = document.getElementById("postReadyGenerateCopyBtn");
   var copyBtn = document.getElementById("postReadyCopyBtn");
@@ -36,7 +35,6 @@
   function setOutputPlain(text) {
     var t = text == null ? "" : String(text);
     if (outputEl) outputEl.textContent = t;
-    if (previewEl) previewEl.textContent = t;
     updateCharMeter(t);
     syncButtons();
   }
@@ -350,9 +348,7 @@
 
   if (outputEl) {
     outputEl.addEventListener("input", function () {
-      var t = getOutputText();
-      if (previewEl) previewEl.textContent = t;
-      updateCharMeter(t);
+      updateCharMeter(getOutputText());
       syncButtons();
     });
   }

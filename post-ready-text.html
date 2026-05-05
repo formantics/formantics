@@ -46,7 +46,7 @@
           "name": "What X post character limit do you use?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "We use 280 characters as the reference for a standard X post. Premium accounts may allow longer posts; treat the counter as a guide and trim in the output box if you need to fit the classic limit."
+            "text": "We use 280 characters as the reference for a standard X post. Premium accounts may allow longer posts; treat the counter as a guide and trim in Preview if you need to fit the classic limit."
           }
         },
         {
@@ -54,7 +54,7 @@
           "name": "Can I edit the generated text before copying?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. The plain output box is editable. When you delete or add characters, the character count and any over-limit message update immediately."
+            "text": "Yes. The Preview box is editable. When you delete or add characters, the character count and any over-limit message update immediately."
           }
         },
         {
@@ -144,35 +144,26 @@
         <div class="panel-header">
           <h2 id="post-ready-output-title">Copy for your post</h2>
           <p class="panel-description">
-            Plain text for your composer: bold letters become Unicode bold where possible; bullets and line breaks follow your pasted structure; indentation uses non-breaking spaces. Use <strong>Copy output</strong> after Generate, or <strong>Generate &amp; Copy</strong> above for one step. You can edit the plain text below — the character counter updates as you type.
+            After <strong>Generate</strong>, your post-ready plain text appears in <strong>Preview</strong> (editable). Unicode bold, bullets, and line breaks are preserved; indentation uses non-breaking spaces. Use <strong>Copy output</strong> below, or <strong>Generate &amp; Copy</strong> above. The character counter updates as you edit Preview.
           </p>
-        </div>
-        <div class="output-controls">
-          <div class="output-controls-main">
-            <button id="postReadyCopyBtn" class="primary-btn" type="button" disabled>Copy output</button>
-            <span id="postReadyCopyStatus" class="copy-status" aria-live="polite"></span>
-          </div>
-        </div>
-        <div class="output-block">
-          <div class="output-label">Plain post-ready text</div>
-          <div
-            id="postReadyOutput"
-            class="editorOutput output-editor"
-            contenteditable="true"
-            role="region"
-            aria-label="Generated post-ready plain text"
-            spellcheck="true"
-          ></div>
         </div>
         <div class="output-block">
           <div class="output-label">Preview</div>
           <div
-            id="postReadyPreview"
+            id="postReadyOutput"
             class="editorOutput output-preview post-ready-output-preview"
-            contenteditable="false"
-            role="region"
-            aria-label="Reading preview of generated text"
+            contenteditable="true"
+            role="textbox"
+            aria-multiline="true"
+            aria-labelledby="post-ready-output-title"
+            spellcheck="true"
           ></div>
+        </div>
+        <div class="output-controls post-ready-copy-after-preview">
+          <div class="output-controls-main">
+            <button id="postReadyCopyBtn" class="primary-btn" type="button" disabled>Copy output</button>
+            <span id="postReadyCopyStatus" class="copy-status" aria-live="polite"></span>
+          </div>
         </div>
         <div id="postReadyCharMeter" class="post-ready-char-meter" aria-live="polite">
           <span id="postReadyCharCount" class="post-ready-char-count">0 characters</span>
@@ -194,7 +185,7 @@
             Click <strong>Generate</strong> to build post-ready plain text: bullet lists become lines with a bullet character, leading indentation becomes non-breaking spaces, and bold becomes Unicode bold symbols where supported.
           </li>
           <li>
-            Click <strong>Copy output</strong>, or use <strong>Generate &amp; Copy</strong> to generate and copy in one click. Paste into X or Threads. Edit the plain box first if you need to shorten — the counter compares length to a <strong>280-character</strong> reference for standard posts.
+            Click <strong>Copy output</strong> below Preview, or use <strong>Generate &amp; Copy</strong> above. Paste into X or Threads. Edit Preview if you need to shorten — the counter compares length to a <strong>280-character</strong> reference for standard posts.
           </li>
         </ol>
       </section>
@@ -218,13 +209,13 @@
             <div class="faq-item">
               <dt>Which character limit should I use for X?</dt>
               <dd>
-                We show counts against <strong>280 characters</strong>, the familiar limit for standard posts. X Premium may allow longer posts — use the counter as a guide and shorten in the output box if you want to stay within the classic limit.
+                We show counts against <strong>280 characters</strong>, the familiar limit for standard posts. X Premium may allow longer posts — use the counter as a guide and shorten in Preview if you want to stay within the classic limit.
               </dd>
             </div>
             <div class="faq-item">
               <dt>Can I trim the text after generating?</dt>
               <dd>
-                Yes. The plain output area is editable. Delete characters to fit your limit; the total updates live. If you pass the reference limit, you’ll see how many characters you’re over.
+                Yes. The Preview box is editable. Delete characters to fit your limit; the total updates live. If you pass the reference limit, you’ll see how many characters you’re over.
               </dd>
             </div>
             <div class="faq-item">

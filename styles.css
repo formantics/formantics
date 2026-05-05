@@ -1649,6 +1649,11 @@ body.theme-dark .post-ready-textarea {
   gap: 10px;
 }
 
+.post-ready-copy-after-preview.output-controls {
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
 .post-ready-char-meter {
   margin-top: 10px;
   padding-top: 12px;
@@ -1686,6 +1691,7 @@ body.theme-dark .post-ready-limit-over {
   font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.55;
+  cursor: text;
 }
 
 .post-ready-how-list {
