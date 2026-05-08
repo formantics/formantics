@@ -182,6 +182,49 @@
     return "• " + line + "\n";
   }
 
+  /** Inline/phrasing tags sometimes appear as direct children of the editor next to divs; treat as inline runs (no trailing paragraph breaks). */
+  function isPhrasingRootElement(el) {
+    if (!el || el.nodeType !== Node.ELEMENT_NODE) return false;
+    var t = el.tagName.toUpperCase();
+    return (
+      t === "STRONG" ||
+      t === "B" ||
+      t === "EM" ||
+      t === "I" ||
+      t === "SPAN" ||
+      t === "A" ||
+      t === "U" ||
+      t === "MARK" ||
+      t === "SMALL" ||
+      t === "SUB" ||
+      t === "SUP" ||
+      t === "CODE" ||
+      t === "S" ||
+      t === "STRIKE" ||
+      t === "DEL" ||
+      t === "INS" ||
+      t === "Q" ||
+      t === "CITE" ||
+      t === "VAR" ||
+      t === "KBD" ||
+      t === "SAMP" ||
+      t === "ABBR" ||
+      t === "FONT"
+    );
+  }
+
+  function nextSignificantSibling(nodes, idx) {
+    for (var j = idx + 1; j < nodes.length; j++) {
+      var n = nodes[j];
+      if (n.nodeType === Node.TEXT_NODE) {
+        if ((n.textContent || "").replace(/\u200b/g, "").trim()) return n;
+        continue;
+      }
+      if (n.nodeType === Node.ELEMENT_NODE) return n;
+    }
+    return null;
+  }
+
   function serializeBlockNode(node) {
     if (node.nodeType === Node.TEXT_NODE) {
       var tx = (node.textContent || "").trim();
@@ -208,8 +251,27 @@
 
   function editorToRawPlain(editorEl) {
     var parts = [];
-    for (var i = 0; i < editorEl.childNodes.length; i++) {
-      parts.push(serializeBlockNode(editorEl.childNodes[i]));
+    var kids = editorEl.childNodes;
+    for (var i = 0; i < kids.length; i++) {
+      var node = kids[i];
+      var chunk = "";
+      if (node.nodeType === Node.TEXT_NODE) {
+        var tx = (node.textContent || "").trim();
+        chunk = tx ? tx + "\n\n" : "";
+      } else if (node.nodeType === Node.ELEMENT_NODE && isPhrasingRootElement(node)) {
+        chunk = serializeInline(node, false);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        chunk = serializeBlockNode(node);
+        var next = nextSignificantSibling(kids, i);
+        var mergeInlineAfter =
+          next &&
+          (next.nodeType === Node.TEXT_NODE ||
+            (next.nodeType === Node.ELEMENT_NODE && isPhrasingRootElement(next)));
+        if (chunk && mergeInlineAfter) {
+          chunk = chunk.replace(/\n\n+$/, "");
+        }
+      }
+      parts.push(chunk);
     }
     return parts.join("").replace(/\n{3,}/g, "\n\n").trim();
   }
